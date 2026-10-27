@@ -30,13 +30,14 @@ Deneme ortamı: Chrome for Testing 156 (Google'ın otomasyon için yayınladığ
 | Sepya filtresinin görüntüye anında uygulanması | ✅ Çalıştı |
 | **Otomatik yönlendirme:** tarayıcıda açılan bir PDF'i Losh görüntüleyicisine göndermek | ✅ Çalıştı. Adresinde ".pdf" geçmeyen bir PDF bile yakalandı, çünkü sunucunun "bu bir PDF" etiketine (`Content-Type`) bakıyoruz. |
 | **B yolu:** Chrome'un kendi PDF ekranında eklenti kodu çalışıyor mu? | ✅ Çalışıyor, filtre sayfaya eklendi |
-| B yolu: Filtre PDF'in **kendisini** gerçekten boyuyor mu? | ❓ Otomasyonla göremedim. Chrome PDF'i ayrı bir katmanda çiziyor ve ekran görüntüsü o katmanı yakalamıyor. **Senin elle denemen gerekiyor** (bkz. Bölüm 8). |
+| B yolu: Filtre PDF'in **kendisini** gerçekten boyuyor mu? | ✅ Kubilay elle denedi (28 Ekim 2026, Chrome 156). Hem web PDF'i hem bilgisayardaki PDF (dosya erişimi açıkken) koyu zemin + açık yazı oldu. |
 
-### Karar önerisi: A ana yol, B şimdilik yok
+### Karar önerisi: A ana yol, B sonra hafif ek seçenek
 
 - **A (kendi görüntüleyicimiz)** her açıdan çalıştı. Web uygulamasıyla aynı kodu kullanıyor. Arama, kaldığı yerden devam ve sıcak ışık gibi her özellik burada mümkün.
 - **B (Chrome'un ekranının üstüne filtre)** en iyi ihtimalle sadece "her şeyi ters çevir" gibi kaba bir filtre verebilir. Arama, kaldığın yer ya da mola hatırlatıcısı yok. Chrome bir güncellemeyle bunu her an bozabilir.
-- **Önerim:** B'yi ilk sürüme koymayalım. A'daki otomatik yönlendirme zaten "PDF'e tıkla, Losh'ta açılsın" deneyimini veriyor. B'yi sadece senin elle yapacağın test çok iyi sonuç verirse ileride düşünürüz.
+- **Elle test sonucu:** B, Chrome 156'da hem web hem yerel PDF'lerde görsel olarak çalışıyor.
+- **Önerim:** İlk sürümün ana yolu A olsun. A'daki otomatik yönlendirme zaten "PDF'e tıkla, Losh'ta açılsın" deneyimini veriyor. B'yi ana yol bittikten sonra ayarlardan açılan hafif bir ek seçenek olarak ekleyebiliriz ("Chrome'un kendi görüntüleyicisini koyulaştır"). Chrome bir güncellemeyle bozabileceği için ana yol yapmayalım.
 
 ---
 
