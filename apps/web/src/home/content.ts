@@ -101,7 +101,7 @@ const en: HomeContent = {
         steps: [
           'Open loshreader.vercel.app in **Safari**.',
           'Tap the **Share** button at the bottom (the square with an arrow pointing up).',
-          'Choose **Add to Home Screen** (scroll the list down a little if you don\x27t see it).',
+          'Choose **Add to Home Screen** (scroll the list down a little if you don’t see it).',
           'Tap **Add** in the top right. Losh is now on your home screen.',
         ],
         note: 'Losh in Safari and Losh on the home screen keep separate storage. It is best to keep your books in the home screen Losh.',
