@@ -84,6 +84,8 @@ CSS filtresi yazı ile fotoğrafı birbirinden ayıramaz. Gece modunda fotoğraf
 - **Olası çözüm:** pdf.js'in `pageColors` adlı bir ayarı var. Sayfayı doğrudan koyu renklerle çiziyor. Bu durumda resimler bozulmayabilir ama mod değişimi anlık olmaz, sayfalar yeniden çizilir.
 - Bunu Aşama 1'de deneyip sana göstereceğim. Henüz doğrulamadım.
 
+> **Aşama 1 bulgusu (28 Ekim 2026):** pdf.js 6.4'te `pageColors` resimleri **korumuyor**; tüm sayfayı iki renkli bir görüntüye çeviriyor. Onun yerine daha iyi bir yol bulundu: pdf.js resimlerin sayfadaki yerini not edebiliyor (`imagesRightClickMinSize`). Gece modunda sadece o alanlar `backdrop-filter` ile ikinci kez ters çevrilerek doğal renklerine döndürülüyor. Anlık çalışıyor, sayfa yeniden çizilmiyor. Ayarlarda "Gece modunda resimleri koru (deneysel)" olarak duruyor. Sınırlama: saydam arka planlı resimlerde (logo gibi) resmin kutusu açık renk görünebilir.
+
 ---
 
 ## 4. Eklenti ayrıntıları
