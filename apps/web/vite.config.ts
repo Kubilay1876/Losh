@@ -31,8 +31,8 @@ function serviceWorker(): Plugin {
       outDir = path.resolve(config.root, config.build.outDir);
     },
     closeBundle() {
-      // Guide screenshots are only for people reading the install guide; they are not kept on every device.
-      const files = listFiles(outDir).filter((f) => f !== 'sw.js' && !f.startsWith('guide/'));
+      // Guide screenshots and the share preview are for people reading the guide or sharing a link; not kept on every device.
+      const files = listFiles(outDir).filter((f) => f !== 'sw.js' && !f.startsWith('guide/') && f !== 'og-image.jpg');
       const describe = (list: string[]) => {
         const hash = createHash('sha256');
         for (const f of list) hash.update(f).update(readFileSync(path.join(outDir, f)));

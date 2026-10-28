@@ -1061,9 +1061,13 @@
   }
 
   /* Preview pages and feature cards lift a little under the pointer. */
-  .home-sheet,
-  .home-features li {
+  .home-sheet {
     transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s;
+  }
+
+  /* `translate`, not `transform`: the scroll reveal owns `transform` on these cards. */
+  .home-features li {
+    transition: translate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s;
   }
 
   .home-page:hover .home-sheet {
@@ -1071,7 +1075,7 @@
   }
 
   .home-features li:hover {
-    transform: translateY(-4px);
+    translate: 0 -4px;
     box-shadow: 0 16px 40px rgb(0 0 0 / 0.35);
   }
 

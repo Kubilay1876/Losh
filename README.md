@@ -1,10 +1,28 @@
+<p align="center">
+  <img src="apps/web/public/og-image.jpg" alt="Losh: aynı sayfanın beyaz, kağıt ve gece tonları" width="720">
+</p>
+
 # Losh
 
-Göz dostu, ücretsiz ve açık kaynak PDF okuyucu. PDF'ler cihazından hiçbir yere gönderilmez; her şey tarayıcıda, internetsiz çalışır.
+**Gözünü yormadan oku.** Losh, PDF kitaplarını kağıt ya da gece tonunda gösteren ücretsiz ve açık kaynak bir okuyucu. Üyelik yok, reklam yok; PDF'lerin cihazından hiçbir yere gönderilmez.
 
-*An eye-friendly, free and open-source PDF reader. Your files never leave your device.*
+**Hemen dene:** https://loshreader.vercel.app · [English](README.en.md)
 
-> Durum: geliştirme aşamasında (Aşama 1 tamam: çekirdek, görüntüleyici, karşılama sayfası). Plan: [docs/asama-0-plan.md](docs/asama-0-plan.md)
+## Neler yapar
+
+- **Göz dostu modlar:** Normal, Kağıt, Gece ve Koyu sepya; sıcak ışık, parlaklık ve kontrast ayarı. Gece modunda fotoğraflar doğal renginde kalır.
+- **Yazıya sığdır:** Sayfanın boş kenarlarını atar, yazıyı ekran genişliğine büyütür. Telefonda yana kaydırmadan okursun.
+- **Okuma modu:** Telefonda sayfaya bir kez dokun, menüler kaybolsun.
+- **Kaldığın yerden devam:** Her kitapta kaldığın sayfayı hatırlar; istersen kitapları cihazında saklar (**Son okunanlar**).
+- **Göz molası (20-20-20):** İstersen 20 dakikada bir, 20 saniyelik bir mola verdirir: önce uzağa bak, sonra göz kırp.
+- **Her yerde çalışır:** iPhone, Android ve bilgisayarda ana ekrana eklenir; bir kez açtıktan sonra internetsiz çalışır.
+- **Beş dil:** Türkçe, English, Español, Français, Русский.
+
+Kurulum ve kullanım rehberi sitede: [Kurulum](https://loshreader.vercel.app/#install) · [Nasıl kullanılır](https://loshreader.vercel.app/#guide) · [SSS](https://loshreader.vercel.app/#faq)
+
+## Gizlilik
+
+Losh hiçbir bilgi toplamaz: sunucu, hesap, çerez, reklam ya da ölçüm aracı yok. PDF'ler tarayıcının içinde açılır; ayarlar ve saklanan kitaplar sadece senin cihazında durur. Ayrıntılar: [gizlilik politikası](https://loshreader.vercel.app/privacy/).
 
 ## Geliştirme
 
@@ -19,18 +37,28 @@ npm run build      # derleme (apps/web/dist)
 npm run test-pdf   # 500 sayfalık test kitabı üret (test-book.pdf)
 ```
 
-## Yapı
+Her `main` güncellemesi Vercel'de kendiliğinden yayına çıkar. Elle denenecekler: [docs/elle-test-listesi.md](docs/elle-test-listesi.md).
+
+### Yapı
 
 ```
-apps/web          web sitesi: karşılama sayfası (/) ve okuyucu (/app/)
-packages/core     modlar, filtreler, ayarlar, çeviriler, proje ayarları (saf TypeScript)
-packages/viewer   pdf.js tabanlı görüntüleyici + arayüz (Preact)
+apps/web          web sitesi: karşılama (/), okuyucu (/app/), gizlilik (/privacy/), service worker
+packages/core     modlar, filtreler, ayarlar, çeviriler, göz molası sayacı (saf TypeScript, testli)
+packages/viewer   pdf.js tabanlı görüntüleyici ve arayüzü (Preact)
 scripts/          yardımcı betikler
-docs/             plan ve test listeleri
+docs/             plan, aşama raporları, test listeleri
 ```
+
+Kullanılanlar: TypeScript, [Preact](https://preactjs.com), [pdf.js](https://mozilla.github.io/pdf.js/), Vite, Vitest.
+
+## Destek
+
+Losh tamamen ücretsiz. Geliştirmeye destek olmak için yakında GitHub Sponsors bağlantısı eklenecek. Bir hata ya da öneri için [issue açabilirsin](https://github.com/Kubilay1876/Losh/issues).
 
 ## Lisans
 
 [MIT](LICENSE) · Üçüncü taraf lisansları: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
+
+Yapımcı: Kubilay Ç. ([@Kubilay1876](https://github.com/Kubilay1876))
 
 Losh bir okuma kolaylığı aracıdır, tıbbi bir ürün değildir. Göz ağrınız sürerse bir göz doktoruna başvurun.

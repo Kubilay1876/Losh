@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://loshreader.vercel.app/sitemap.xml
