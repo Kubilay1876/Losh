@@ -396,7 +396,7 @@ a.losh-brand:hover .losh-brand-text {
 }
 
 /* Paper tint: multiply turns white paper into the tint colour while black ink stays black. */
-.losh-scroll .pdfViewer .canvasWrapper::after {
+.losh-tinted .losh-scroll .pdfViewer .canvasWrapper::after {
   content: '';
   position: absolute;
   inset: 0;

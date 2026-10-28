@@ -108,7 +108,10 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
       onSearchChange: setSearch,
     });
     controllerRef.current = controller;
-    const stopPinch = enablePinchZoom(scrollRef.current!, (factor, origin) => controller.zoomBy(factor, origin));
+    const stopPinch = enablePinchZoom(scrollRef.current!, scrollRef.current!.querySelector<HTMLElement>('.pdfViewer')!, {
+      range: () => controller.zoomRange(),
+      zoomBy: (factor, origin) => controller.zoomBy(factor, origin),
+    });
     return () => {
       stopPinch();
       controller.destroy();
@@ -383,7 +386,7 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
 
   return (
     <div
-      class={`losh${filters.imageRestoreFilter ? ' losh-restore-images' : ''}`}
+      class={`losh${filters.imageRestoreFilter ? ' losh-restore-images' : ''}${filters.pageTint !== 'transparent' ? ' losh-tinted' : ''}`}
       data-mode={settings.mode}
       data-bars={barsHidden ? 'hidden' : barsEverAway ? 'back' : undefined}
       style={styleVars}
@@ -550,7 +553,8 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
         <div class="losh-scroll" ref={scrollRef} tabIndex={0} aria-label={status.kind === 'ready' ? status.name : t('app.name')} onClick={onPageTap}>
           <div class="pdfViewer" />
         </div>
-        <div class="losh-warm" aria-hidden="true" />
+        {/* Blend layers cost phones smooth scrolling, so they exist only while they change something. */}
+        {filters.warmOverlay.opacity > 0 && <div class="losh-warm" aria-hidden="true" />}
 
         {status.kind !== 'ready' && (
           <div class="losh-empty">

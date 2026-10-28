@@ -140,6 +140,13 @@ export class ReaderController {
     this.setZoom(prev ?? ZOOM_STEPS[0]);
   }
 
+  /** How far pinch zoom may scale from the current zoom, as [smallest, largest] factor. */
+  zoomRange(): [number, number] {
+    if (!this.doc) return [1, 1];
+    const current = this.viewer.currentScale;
+    return [ZOOM_STEPS[0] / current, ZOOM_STEPS[ZOOM_STEPS.length - 1] / current];
+  }
+
   /** Pinch zoom: scales by `factor` around a point in viewport coordinates, within the zoom steps' range. */
   zoomBy(factor: number, origin: [number, number]): void {
     if (!this.doc) return;
@@ -147,8 +154,16 @@ export class ReaderController {
     const target = Math.min(ZOOM_STEPS[ZOOM_STEPS.length - 1], Math.max(ZOOM_STEPS[0], current * factor));
     if (Math.abs(target - current) < 0.005) return;
     this.zoomPreset = Math.round(target * 100) / 100;
-    // The delay lets pdf.js stretch the current pages while fingers move and redraw sharply once they rest.
+    // Remember which spot of which page is under the fingers; pdf.js only roughly keeps it there.
+    const pageDiv = document.elementFromPoint(origin[0], origin[1])?.closest<HTMLElement>('.page');
+    const before = pageDiv?.getBoundingClientRect();
+    // The delay lets pdf.js show the stretched pages at once and redraw them sharply a moment later.
     this.viewer.updateScale({ scaleFactor: target / current, drawingDelay: 300, origin });
+    if (!pageDiv || !before) return;
+    const after = pageDiv.getBoundingClientRect();
+    const container = this.viewer.container;
+    container.scrollLeft += after.left + ((origin[0] - before.left) / before.width) * after.width - origin[0];
+    container.scrollTop += after.top + ((origin[1] - before.top) / before.height) * after.height - origin[1];
   }
 
   find(query: string, options: { again?: boolean; previous?: boolean } = {}): void {
