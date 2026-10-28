@@ -1,13 +1,16 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { computeFilters, MODE_IDS, STORAGE_KEYS, translate, type KeyValueStore, type MessageKey } from '@losh/core';
 import { ReaderController, type SearchState, type ZoomValue } from '../pdf/controller';
 import { documentKey } from '../pdf/docKey';
+import { enablePinchZoom } from '../pdf/pinch';
+import type { RecentLibrary } from '../library';
 import { useSettings } from '../useSettings';
 import { isTextField, matchShortcut } from '../shortcuts';
 import { SettingsPanel } from './SettingsPanel';
 import { Logo } from './Logo';
 import { SearchBar } from './SearchBar';
 import { HelpDialog } from './HelpDialog';
+import { RecentList, type RecentItem } from './RecentList';
 import { IconBook, IconCandle, IconChevronLeft, IconChevronRight, IconHelp, IconMinus, IconMoon, IconOpen, IconPlus, IconSearch, IconSliders, IconSun } from './icons';
 
 export interface ReaderProps {
@@ -16,6 +19,10 @@ export interface ReaderProps {
   pdfAssetsBase: string;
   /** When set, the "Losh" brand links back to this page (the welcome page). */
   homeHref?: string;
+  /** On-device storage for "Recently read". Without it the reader keeps nothing. */
+  library?: RecentLibrary;
+  /** Called once with a function that opens a file; for files arriving from outside (share sheet, "Open with"). */
+  connectFiles?(open: (file: File) => void): void;
 }
 
 type Status = { kind: 'empty' } | { kind: 'loading' } | { kind: 'ready'; name: string } | { kind: 'error'; message: MessageKey };
@@ -29,7 +36,7 @@ function isPdf(file: File): boolean {
   return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
 }
 
-export function Reader({ store, pdfAssetsBase, homeHref }: ReaderProps) {
+export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }: ReaderProps) {
   const [settings, update] = useSettings(store);
   const t = useCallback(
     (key: MessageKey, params?: Record<string, string | number>) => translate(settings.locale, key, params),
@@ -55,9 +62,14 @@ export function Reader({ store, pdfAssetsBase, homeHref }: ReaderProps) {
   const [helpOpen, setHelpOpen] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [toast, setToast] = useState('');
+  const [recent, setRecent] = useState<RecentItem[]>([]);
+  /** A just-opened PDF waiting for the "keep it on this device?" answer. */
+  const [keepAsk, setKeepAsk] = useState<{ file: File; key: string } | null>(null);
 
   // --- pdf.js controller -------------------------------------------------
-  useEffect(() => {
+  // A layout effect, so the controller exists before the first paint: a file picked or shared
+  // in that first moment must not be dropped.
+  useLayoutEffect(() => {
     const controller = new ReaderController(scrollRef.current!, pdfAssetsBase, {
       onPageChange(current, total) {
         currentPageRef.current = current;
@@ -74,7 +86,11 @@ export function Reader({ store, pdfAssetsBase, homeHref }: ReaderProps) {
       onSearchChange: setSearch,
     });
     controllerRef.current = controller;
-    return () => controller.destroy();
+    const stopPinch = enablePinchZoom(scrollRef.current!, (factor, origin) => controller.zoomBy(factor, origin));
+    return () => {
+      stopPinch();
+      controller.destroy();
+    };
   }, [pdfAssetsBase, store]);
 
   useEffect(() => {
@@ -82,6 +98,50 @@ export function Reader({ store, pdfAssetsBase, homeHref }: ReaderProps) {
     const id = setTimeout(() => setToast(''), TOAST_MS);
     return () => clearTimeout(id);
   }, [toast]);
+
+  // --- recently read -------------------------------------------------------------
+  const refreshRecent = useCallback(async () => {
+    if (!library) return;
+    try {
+      const entries = await library.list();
+      const items = await Promise.all(
+        entries.map(async (e) => ({ ...e, page: (await store.get<{ page?: number }>(STORAGE_KEYS.position(e.key)))?.page })),
+      );
+      setRecent(items);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [library, store]);
+
+  useEffect(() => {
+    void refreshRecent();
+  }, [refreshRecent]);
+
+  const keepFile = useCallback(
+    async (file: File, key: string) => {
+      if (!library) return;
+      await library.save({ key, name: file.name, size: file.size, openedAt: Date.now() }, await file.arrayBuffer());
+      // Ask the browser not to clear our storage when space runs low (only a hint; it may say no).
+      void navigator.storage?.persist?.().catch(() => false);
+      await refreshRecent();
+    },
+    [library, refreshRecent],
+  );
+
+  /** After a PDF opened: refresh its "recent" entry, keep it, or ask, depending on the setting. */
+  const rememberFile = useCallback(
+    async (file: File, key: string) => {
+      if (!library) return;
+      try {
+        if (await library.touch(key)) await refreshRecent();
+        else if (settings.keepRecent === 'always') await keepFile(file, key);
+        else if (settings.keepRecent === 'ask') setKeepAsk({ file, key });
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    [library, settings.keepRecent, keepFile, refreshRecent],
+  );
 
   const openFile = useCallback(
     async (file: File) => {
@@ -93,6 +153,7 @@ export function Reader({ store, pdfAssetsBase, homeHref }: ReaderProps) {
       }
       setStatus({ kind: 'loading' });
       setSearchOpen(false);
+      setKeepAsk(null);
       controller.clearSearch();
       try {
         const bytes = new Uint8Array(await file.arrayBuffer());
@@ -106,14 +167,44 @@ export function Reader({ store, pdfAssetsBase, homeHref }: ReaderProps) {
         setStatus({ kind: 'ready', name: file.name });
         document.title = `${file.name} — ${translate(settings.locale, 'app.name')}`;
         if (startPage > 1 && startPage <= controller.pageCount) setToast(translate(settings.locale, 'resume.toast', { page: startPage }));
+        void rememberFile(file, key);
       } catch (err) {
         console.error(err);
         const name = (err as { name?: string })?.name;
         setStatus({ kind: 'error', message: name === 'PasswordException' ? 'error.password' : 'error.load' });
       }
     },
-    [store, settings.locale],
+    [store, settings.locale, rememberFile],
   );
+
+  // Files from outside arrive through this once; route them to the latest openFile.
+  const openFileRef = useRef(openFile);
+  openFileRef.current = openFile;
+  useEffect(() => {
+    connectFiles?.((file) => void openFileRef.current(file));
+  }, []);
+
+  const openRecent = async (key: string) => {
+    const file = await library?.load(key).catch(() => null);
+    if (file) {
+      void openFile(file);
+      return;
+    }
+    setStatus({ kind: 'error', message: 'recent.missing' });
+    await library?.remove(key).catch(() => undefined);
+    await refreshRecent();
+  };
+
+  const removeRecent = async (key: string) => {
+    await library?.remove(key);
+    await refreshRecent();
+  };
+
+  const clearRecent = async () => {
+    if (!library || !window.confirm(t('recent.clearConfirm'))) return;
+    await library.clear();
+    await refreshRecent();
+  };
 
   const pickFile = () => fileInput.current?.click();
 
@@ -249,21 +340,53 @@ export function Reader({ store, pdfAssetsBase, homeHref }: ReaderProps) {
           <span>{t('open.button')}</span>
         </button>
 
-        <div class="losh-modes" role="group" aria-label={t('mode.group')}>
-          {MODE_IDS.map((id, i) => (
-            <button
-              type="button"
-              key={id}
-              class="losh-mode"
-              data-swatch={id}
-              aria-pressed={settings.mode === id}
-              onClick={() => update({ mode: id })}
-              title={`${t(`mode.${id}` as MessageKey)} (${i + 1})`}
-            >
-              <span class="losh-mode-icon">{MODE_ICONS[id]()}</span>
-              <span>{t(`mode.${id}` as MessageKey)}</span>
-            </button>
-          ))}
+        {/* Modes and page controls: inline on wide screens, a bottom bar within thumb reach on phones. */}
+        <div class="losh-dock">
+          <div class="losh-modes" role="group" aria-label={t('mode.group')}>
+            {MODE_IDS.map((id, i) => (
+              <button
+                type="button"
+                key={id}
+                class="losh-mode"
+                data-swatch={id}
+                aria-pressed={settings.mode === id}
+                onClick={() => update({ mode: id })}
+                title={`${t(`mode.${id}` as MessageKey)} (${i + 1})`}
+              >
+                <span class="losh-mode-icon">{MODE_ICONS[id]()}</span>
+                <span>{t(`mode.${id}` as MessageKey)}</span>
+              </button>
+            ))}
+          </div>
+
+          {hasDoc && (
+            <div class="losh-group losh-pages">
+              <button type="button" class="losh-icon-btn" onClick={() => controllerRef.current?.previousPage()} aria-label={t('page.prev')} title={`${t('page.prev')} (←)`} disabled={page.current <= 1}>
+                <IconChevronLeft />
+              </button>
+              <input
+                class="losh-page-input"
+                inputMode="numeric"
+                enterKeyHint="go"
+                aria-label={t('page.input')}
+                value={pageInput}
+                onFocus={(e) => (e.currentTarget as HTMLInputElement).select()}
+                onInput={(e) => setPageInput((e.currentTarget as HTMLInputElement).value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    controllerRef.current?.goToPage(Number(pageInput) || page.current);
+                    // Hand focus back to the pages so arrow keys work and the next click re-selects the number.
+                    scrollRef.current?.focus();
+                  }
+                }}
+                onBlur={() => setPageInput(String(currentPageRef.current))}
+              />
+              <span class="losh-page-total">{t('page.of', { total: page.total })}</span>
+              <button type="button" class="losh-icon-btn" onClick={() => controllerRef.current?.nextPage()} aria-label={t('page.next')} title={`${t('page.next')} (→)`} disabled={page.current >= page.total}>
+                <IconChevronRight />
+              </button>
+            </div>
+          )}
         </div>
 
         <button
@@ -280,35 +403,7 @@ export function Reader({ store, pdfAssetsBase, homeHref }: ReaderProps) {
         <div class="losh-spacer" />
 
         {hasDoc && (
-          <div class="losh-group">
-            <button type="button" class="losh-icon-btn" onClick={() => controllerRef.current?.previousPage()} aria-label={t('page.prev')} title={`${t('page.prev')} (←)`} disabled={page.current <= 1}>
-              <IconChevronLeft />
-            </button>
-            <input
-              class="losh-page-input"
-              inputMode="numeric"
-              aria-label={t('page.input')}
-              value={pageInput}
-              onFocus={(e) => (e.currentTarget as HTMLInputElement).select()}
-              onInput={(e) => setPageInput((e.currentTarget as HTMLInputElement).value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  controllerRef.current?.goToPage(Number(pageInput) || page.current);
-                  // Hand focus back to the pages so arrow keys work and the next click re-selects the number.
-                  scrollRef.current?.focus();
-                }
-              }}
-              onBlur={() => setPageInput(String(currentPageRef.current))}
-            />
-            <span class="losh-page-total">{t('page.of', { total: page.total })}</span>
-            <button type="button" class="losh-icon-btn" onClick={() => controllerRef.current?.nextPage()} aria-label={t('page.next')} title={`${t('page.next')} (→)`} disabled={page.current >= page.total}>
-              <IconChevronRight />
-            </button>
-          </div>
-        )}
-
-        {hasDoc && (
-          <div class="losh-group">
+          <div class="losh-group losh-zoom-group">
             <button type="button" class="losh-icon-btn" onClick={() => controllerRef.current?.zoomOut()} aria-label={t('zoom.out')} title={`${t('zoom.out')} (−)`}>
               <IconMinus />
             </button>
@@ -354,7 +449,7 @@ export function Reader({ store, pdfAssetsBase, homeHref }: ReaderProps) {
           </button>
         )}
 
-        <button type="button" class="losh-icon-btn" onClick={() => setHelpOpen(true)} aria-label={t('help.open')} title={`${t('help.open')} (?)`}>
+        <button type="button" class="losh-icon-btn losh-help-btn" onClick={() => setHelpOpen(true)} aria-label={t('help.open')} title={`${t('help.open')} (?)`}>
           <IconHelp />
         </button>
       </div>
@@ -372,7 +467,16 @@ export function Reader({ store, pdfAssetsBase, homeHref }: ReaderProps) {
         />
       )}
 
-      {settingsOpen && <SettingsPanel settings={settings} update={update} t={t} onClose={() => setSettingsOpen(false)} />}
+      {settingsOpen && (
+        <SettingsPanel
+          settings={settings}
+          update={update}
+          t={t}
+          onClose={() => setSettingsOpen(false)}
+          recentBytes={library ? recent.reduce((sum, r) => sum + r.size, 0) : undefined}
+          onClearRecent={() => void clearRecent()}
+        />
+      )}
 
       <main class="losh-stage">
         <div class="losh-scroll" ref={scrollRef} tabIndex={0} aria-label={status.kind === 'ready' ? status.name : t('app.name')}>
@@ -387,19 +491,31 @@ export function Reader({ store, pdfAssetsBase, homeHref }: ReaderProps) {
                 {t('loading')}
               </p>
             ) : (
-              <div class="losh-drop">
-                <p class="losh-drop-title">{t('open.drop')}</p>
-                <p class="losh-drop-or">{t('open.or')}</p>
-                <button type="button" class="losh-btn losh-btn-primary losh-btn-large" onClick={pickFile}>
-                  <IconOpen />
-                  <span>{t('open.choose')}</span>
-                </button>
-                {status.kind === 'error' && (
-                  <p class="losh-error" role="alert">
-                    {t(status.message)}
-                  </p>
+              <div class="losh-start">
+                <div class="losh-drop">
+                  <p class="losh-drop-title">{t('open.drop')}</p>
+                  <p class="losh-drop-or">{t('open.or')}</p>
+                  <button type="button" class="losh-btn losh-btn-primary losh-btn-large" onClick={pickFile}>
+                    <IconOpen />
+                    <span>{t('open.choose')}</span>
+                  </button>
+                  {status.kind === 'error' && (
+                    <p class="losh-error" role="alert">
+                      {t(status.message)}
+                    </p>
+                  )}
+                  <p class="losh-privacy">{t('open.privacy')}</p>
+                </div>
+                {recent.length > 0 && (
+                  <RecentList
+                    items={recent}
+                    locale={settings.locale}
+                    t={t}
+                    onOpen={(key) => void openRecent(key)}
+                    onRemove={(key) => void removeRecent(key)}
+                    onClear={() => void clearRecent()}
+                  />
                 )}
-                <p class="losh-privacy">{t('open.privacy')}</p>
               </div>
             )}
           </div>
@@ -424,6 +540,37 @@ export function Reader({ store, pdfAssetsBase, homeHref }: ReaderProps) {
           input.value = '';
         }}
       />
+
+      {keepAsk && (
+        <div class="losh-keep" role="region" aria-label={t('recent.title')}>
+          <p class="losh-keep-question">{t('keep.question')}</p>
+          <p class="losh-hint">{t('keep.note')}</p>
+          <div class="losh-keep-actions">
+            <button
+              type="button"
+              class="losh-text-btn"
+              onClick={() => {
+                update({ keepRecent: 'never' });
+                setKeepAsk(null);
+              }}
+            >
+              {t('keep.no')}
+            </button>
+            <button
+              type="button"
+              class="losh-btn losh-btn-primary"
+              onClick={() => {
+                const { file, key } = keepAsk;
+                update({ keepRecent: 'always' });
+                setKeepAsk(null);
+                keepFile(file, key).catch((err) => console.error(err));
+              }}
+            >
+              {t('keep.yes')}
+            </button>
+          </div>
+        </div>
+      )}
 
       <div class="losh-toast" role="status" aria-live="polite">
         {toast && <span>{toast}</span>}

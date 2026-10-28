@@ -140,6 +140,17 @@ export class ReaderController {
     this.setZoom(prev ?? ZOOM_STEPS[0]);
   }
 
+  /** Pinch zoom: scales by `factor` around a point in viewport coordinates, within the zoom steps' range. */
+  zoomBy(factor: number, origin: [number, number]): void {
+    if (!this.doc) return;
+    const current = this.viewer.currentScale;
+    const target = Math.min(ZOOM_STEPS[ZOOM_STEPS.length - 1], Math.max(ZOOM_STEPS[0], current * factor));
+    if (Math.abs(target - current) < 0.005) return;
+    this.zoomPreset = Math.round(target * 100) / 100;
+    // The delay lets pdf.js stretch the current pages while fingers move and redraw sharply once they rest.
+    this.viewer.updateScale({ scaleFactor: target / current, drawingDelay: 300, origin });
+  }
+
   find(query: string, options: { again?: boolean; previous?: boolean } = {}): void {
     this.search = { ...this.search, query };
     this.eventBus.dispatch('find', {

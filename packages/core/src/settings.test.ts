@@ -44,4 +44,10 @@ describe('sanitizeSettings', () => {
     expect(DEFAULT_SETTINGS.breakReminder.enabled).toBe(false);
     expect(DEFAULT_SETTINGS.breakReminder.intervalMinutes).toBe(20);
   });
+
+  it('asks before keeping PDFs on the device', () => {
+    expect(DEFAULT_SETTINGS.keepRecent).toBe('ask');
+    expect(sanitizeSettings({ keepRecent: 'always' }).keepRecent).toBe('always');
+    expect(sanitizeSettings({ keepRecent: 'sometimes' }).keepRecent).toBe('ask');
+  });
 });

@@ -50,5 +50,34 @@ Hazırlık: terminalde `cd C:\Users\admin\Desktop\losh` ve `npm.cmd run dev` ça
 - [ ] `?` kısayol penceresini açıyor, `Esc` kapatıyor.
 - [ ] Ayarlardan dil English yapılınca tüm yazılar İngilizce oluyor.
 - [ ] Sadece klavyeyle (`Tab`) tüm düğmelere ulaşılabiliyor ve odaklanan düğmenin etrafında çerçeve görünüyor.
-- [ ] Windows açık/koyu tema değiştirince araç çubuğu da açık/koyu oluyor.
+- [ ] Arayüz her zaman koyu mor temada (Windows açık temada olsa bile).
 - [ ] Wi-Fi kapalıyken (sayfa zaten açıksa) PDF açmak çalışıyor.
+
+## Aşama 2 — Telefon uygulaması (PWA)
+
+Bunlar yayındaki sitede denenir: https://loshreader.vercel.app
+
+### iPhone'a kurma ve internetsiz açılış
+- [ ] Safari'de siteyi aç → Paylaş düğmesi (yukarı ok olan kare) → **Ana Ekrana Ekle**. Ana ekranda Losh logolu ikon çıkıyor.
+- [ ] İkona dokununca Losh adres çubuğu olmadan, tam ekran ve **karşılama sayfasıyla** açılıyor.
+- [ ] Üstteki saat ve pil göstergesi Losh'un düğmelerinin üstüne binmiyor.
+- [ ] Uygulamayı bir kez açıp kapattıktan sonra **uçak modunu aç** → Losh'u ana ekrandan aç: karşılama sayfası, okuyucu ve PDF açma çalışıyor.
+
+### Son okunanlar
+- [ ] İlk PDF'i açınca altta "Bu PDF'i cihazında saklayayım mı?" kartı çıkıyor.
+- [ ] "Evet, sakla" deyip okuyucuyu yeniden açınca **Son okunanlar** listesinde dosya adı, boyutu ve kaldığın sayfa görünüyor.
+- [ ] Uçak modunda listedeki PDF'e dokununca kaldığın sayfadan açılıyor.
+- [ ] Sonraki PDF'lerde kart bir daha çıkmıyor (seçim hatırlanıyor).
+- [ ] Listede × ile tek dosya, "Tümünü sil" ile hepsi siliniyor (onay soruyor).
+- [ ] Ayarlar'daki "PDF'leri bu cihazda sakla" seçeneği (Sor / Evet / Hayır) ve kaplanan yer görünüyor.
+
+### Telefon arayüzü
+- [ ] Modlar ve sayfa numarası **altta**, başparmakla ulaşılacak yerde.
+- [ ] Sayfaları iki parmakla açıp kapatınca (pinch) **sadece PDF** büyüyor, üst ve alt çubuklar aynı kalıyor; parmaklar durunca yazı netleşiyor.
+- [ ] Ayarlar alttan yukarı kayan bir panel olarak açılıyor.
+- [ ] Sayfa numarası kutusuna dokununca ekran kendi kendine büyümüyor.
+- [ ] Telefonu yan çevirince de düzen bozulmuyor.
+
+### Android ve bilgisayar (cihaz varsa)
+- [ ] Android Chrome: siteye girince "Uygulamayı yükle" çıkıyor; kurulunca bir PDF'i **Paylaş** menüsünden Losh'a gönderince okuyucuda açılıyor.
+- [ ] Bilgisayar Chrome/Edge: adres çubuğundaki "Yükle" simgesiyle kurulabiliyor; kurulu Losh, PDF dosyalarında "Birlikte aç" listesinde çıkıyor.

@@ -54,7 +54,8 @@
   width: 100%;
   max-width: 980px;
   margin: 0 auto;
-  padding: 18px 20px;
+  /* Room for the iPhone status bar and notch when installed on the home screen. */
+  padding: max(18px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) 18px max(20px, env(safe-area-inset-left));
 }
 
 .home-brand {

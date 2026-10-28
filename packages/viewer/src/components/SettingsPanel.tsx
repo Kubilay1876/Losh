@@ -1,15 +1,20 @@
 import { useEffect, useRef } from 'preact/hooks';
-import { DEFAULT_SETTINGS, LOCALE_NAMES, LOCALES, MODES, SETTINGS_LIMITS, type Locale, type MessageKey, type Settings } from '@losh/core';
+import { DEFAULT_SETTINGS, KEEP_RECENT, LOCALE_NAMES, LOCALES, MODES, SETTINGS_LIMITS, type KeepRecent, type Locale, type MessageKey, type Settings } from '@losh/core';
+import { RECENT_LIMIT } from '../library';
 import { IconClose } from './icons';
+import { formatSize } from './RecentList';
 
 interface Props {
   settings: Settings;
   update(patch: Partial<Settings>): void;
-  t(key: MessageKey): string;
+  t(key: MessageKey, params?: Record<string, string | number>): string;
   onClose(): void;
+  /** Bytes used by kept PDFs; leave out when this reader has no "Recently read" storage. */
+  recentBytes?: number;
+  onClearRecent?(): void;
 }
 
-export function SettingsPanel({ settings, update, t, onClose }: Props) {
+export function SettingsPanel({ settings, update, t, onClose, recentBytes, onClearRecent }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -80,6 +85,36 @@ export function SettingsPanel({ settings, update, t, onClose }: Props) {
           ))}
         </select>
       </div>
+      {recentBytes !== undefined && (
+        <div class="losh-field">
+          <label for="losh-keep">
+            <span>{t('settings.keepRecent')}</span>
+          </label>
+          <select
+            id="losh-keep"
+            value={settings.keepRecent}
+            onChange={(e) => update({ keepRecent: (e.currentTarget as HTMLSelectElement).value as KeepRecent })}
+          >
+            {KEEP_RECENT.map((k) => (
+              <option value={k} key={k}>
+                {t(`settings.keepRecent.${k}` as MessageKey)}
+              </option>
+            ))}
+          </select>
+          <small class="losh-hint">
+            {t('settings.keepRecentHint', { limit: RECENT_LIMIT })}
+            {recentBytes > 0 && (
+              <>
+                {' '}
+                {t('recent.usage', { size: formatSize(recentBytes, settings.locale) })} ·{' '}
+                <button type="button" class="losh-link-btn" onClick={onClearRecent}>
+                  {t('recent.clear')}
+                </button>
+              </>
+            )}
+          </small>
+        </div>
+      )}
       <button
         type="button"
         class="losh-text-btn"

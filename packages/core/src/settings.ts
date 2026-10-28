@@ -3,6 +3,10 @@ import { isModeId, type ModeId } from './modes';
 export const LOCALES = ['tr', 'en', 'es', 'fr', 'ru'] as const;
 export type Locale = (typeof LOCALES)[number];
 
+/** Whether opened PDFs are kept on the device for "Recent" (offline re-opening). 'ask' = not decided yet. */
+export const KEEP_RECENT = ['ask', 'always', 'never'] as const;
+export type KeepRecent = (typeof KEEP_RECENT)[number];
+
 export interface Settings {
   mode: ModeId;
   /** Warm light overlay strength, 0–100. */
@@ -14,6 +18,7 @@ export interface Settings {
   /** In inverted modes, show colourful photos in natural colours (diagrams and scans still invert). */
   preserveImages: boolean;
   locale: Locale;
+  keepRecent: KeepRecent;
   breakReminder: {
     enabled: boolean;
     intervalMinutes: number;
@@ -36,6 +41,7 @@ export const DEFAULT_SETTINGS: Settings = {
   contrast: 100,
   preserveImages: true,
   locale: 'tr',
+  keepRecent: 'ask',
   breakReminder: { enabled: false, intervalMinutes: 20, asked: false },
 };
 
@@ -60,6 +66,7 @@ export function sanitizeSettings(raw: unknown): Settings {
     contrast: clampNumber(r.contrast, SETTINGS_LIMITS.contrast, d.contrast),
     preserveImages: bool(r.preserveImages, d.preserveImages),
     locale: (LOCALES as readonly unknown[]).includes(r.locale) ? (r.locale as Locale) : d.locale,
+    keepRecent: (KEEP_RECENT as readonly unknown[]).includes(r.keepRecent) ? (r.keepRecent as KeepRecent) : d.keepRecent,
     breakReminder: {
       enabled: bool(br.enabled, d.breakReminder.enabled),
       intervalMinutes: clampNumber(br.intervalMinutes, SETTINGS_LIMITS.intervalMinutes, d.breakReminder.intervalMinutes),
