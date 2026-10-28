@@ -16,6 +16,7 @@ const UI_NAMES: Record<string, MessageKey> = {
   recent: 'recent.title',
   settings: 'settings.title',
   clear: 'recent.clear',
+  breakReminder: 'settings.breakReminder',
 };
 
 function fill(text: string, locale: Locale): string {
@@ -150,7 +151,10 @@ const GUIDE_ICONS = [
   'M10 13V5a2 2 0 0 1 4 0v6l4.5.9A2 2 0 0 1 20 14l-.7 4.2A3 3 0 0 1 16.3 21H12a3 3 0 0 1-2.4-1.2L6 15a1.7 1.7 0 0 1 2.6-2.2zM6 6.5a6 6 0 0 1 2-2.8M18 6.5a6 6 0 0 0-2-2.8',
   'M6 3h12v18l-6-4-6 4z',
   'M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4',
+  'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
 ];
+/** The eye break card closes the how-to list across the full width. */
+const GUIDE_WIDE_ITEM = 6;
 
 export function GuideSection({ locale, title }: { locale: Locale; title: string }) {
   const content = HOME_CONTENT[locale].guide;
@@ -164,7 +168,7 @@ export function GuideSection({ locale, title }: { locale: Locale; title: string 
       </p>
       <ol class="home-guide">
         {content.items.map((item, i) => (
-          <li key={i} data-reveal style={delay((i % 3) * 110)}>
+          <li key={i} class={i === GUIDE_WIDE_ITEM ? 'home-guide-wide' : undefined} data-reveal style={delay((i % 3) * 110)}>
             <span class="home-guide-icon" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d={GUIDE_ICONS[i]} />

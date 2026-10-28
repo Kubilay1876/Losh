@@ -16,7 +16,7 @@ export interface HomeContent {
   };
   guide: {
     intro: string;
-    /** Same order as GUIDE_ICONS in Home.tsx. */
+    /** Same order as GUIDE_ICONS in Sections.tsx. */
     items: { title: string; text: string }[];
   };
   faq: {
@@ -71,6 +71,7 @@ const tr: HomeContent = {
       { title: 'Menüleri gizle', text: 'Telefonda sayfaya bir kez dokun: menüler kaybolur, PDF bütün ekranı kaplar. Bir daha dokununca geri gelirler.' },
       { title: 'Kaldığın yerden devam et', text: 'Losh her kitapta kaldığın sayfayı hatırlar. Saklamayı seçtiğin kitaplar **{recent}** listesinde durur ve internetsiz de açılır.' },
       { title: 'Ara ve kısayolları kullan', text: 'Büyüteçle kitabın içinde arama yaparsın. Bilgisayarda **?** tuşu bütün klavye kısayollarını gösterir.' },
+      { title: 'Göz molası ver', text: 'Losh ilk okumanda sorar; sonra **{settings}** içinden **{breakReminder}**nı açıp kapatabilirsin. Açıksa her 20 dakikalık okumadan sonra 20 saniyelik bir mola verdirir: önce uzağa bakarsın, sonra göz kırparsın. Aralığı 10 ile 60 dakika arasında seçebilirsin.' },
     ],
   },
   faq: {
@@ -136,6 +137,7 @@ const en: HomeContent = {
       { title: 'Hide the menus', text: 'On a phone, tap the page once: the menus go away and the PDF fills the screen. Tap again to bring them back.' },
       { title: 'Pick up where you left off', text: 'Losh remembers your page in every book. Books you chose to keep stay in **{recent}** and open offline too.' },
       { title: 'Search and use shortcuts', text: 'Use the magnifier to search inside the book. On a computer, the **?** key shows every keyboard shortcut.' },
+      { title: 'Take eye breaks', text: 'Losh asks the first time you read; later you can switch the **{breakReminder}** on or off in **{settings}**. When it is on, after every 20 minutes of reading you get a 20-second break: first look far away, then blink. You can pick an interval from 10 to 60 minutes.' },
     ],
   },
   faq: {
@@ -201,6 +203,7 @@ const es: HomeContent = {
       { title: 'Oculta los menús', text: 'En el móvil, toca la página una vez: los menús desaparecen y el PDF ocupa toda la pantalla. Vuelve a tocar para que regresen.' },
       { title: 'Sigue donde lo dejaste', text: 'Losh recuerda tu página en cada libro. Los libros que decidiste guardar quedan en **{recent}** y se abren también sin conexión.' },
       { title: 'Busca y usa atajos', text: 'Con la lupa buscas dentro del libro. En un ordenador, la tecla **?** muestra todos los atajos de teclado.' },
+      { title: 'Descansa la vista', text: 'Losh te lo pregunta la primera vez que lees; luego puedes activar o desactivar el **{breakReminder}** en **{settings}**. Si está activado, tras cada 20 minutos de lectura te propone un descanso de 20 segundos: primero mira lejos y luego parpadea. Puedes elegir un intervalo de 10 a 60 minutos.' },
     ],
   },
   faq: {
@@ -266,6 +269,7 @@ const fr: HomeContent = {
       { title: 'Masquez les menus', text: 'Sur téléphone, touchez la page une fois : les menus disparaissent et le PDF occupe tout l’écran. Touchez à nouveau pour les faire revenir.' },
       { title: 'Reprenez où vous en étiez', text: 'Losh retient votre page dans chaque livre. Les livres que vous avez choisi de garder restent dans **{recent}** et s’ouvrent aussi hors ligne.' },
       { title: 'Cherchez et utilisez les raccourcis', text: 'La loupe permet de chercher dans le livre. Sur ordinateur, la touche **?** affiche tous les raccourcis clavier.' },
+      { title: 'Faites des pauses', text: 'Losh vous le propose à votre première lecture ; ensuite, activez ou désactivez le **{breakReminder}** dans **{settings}**. S’il est activé, après chaque 20 minutes de lecture vous faites une pause de 20 secondes : d’abord regarder au loin, puis cligner des yeux. L’intervalle va de 10 à 60 minutes.' },
     ],
   },
   faq: {
@@ -331,6 +335,7 @@ const ru: HomeContent = {
       { title: 'Скройте меню', text: 'На телефоне коснитесь страницы один раз: меню исчезнут, и PDF займёт весь экран. Коснитесь снова, чтобы вернуть их.' },
       { title: 'Продолжайте с того же места', text: 'Losh помнит вашу страницу в каждой книге. Книги, которые вы решили сохранить, остаются в списке **{recent}** и открываются без интернета.' },
       { title: 'Поиск и сочетания клавиш', text: 'Лупа ищет по тексту книги. На компьютере клавиша **?** показывает все сочетания клавиш.' },
+      { title: 'Делайте перерывы', text: 'Losh спросит об этом при первом чтении; потом **{breakReminder}** можно включить или выключить в разделе **{settings}**. Если он включён, после каждых 20 минут чтения будет 20-секундный перерыв: сначала смотрите вдаль, потом моргайте. Интервал можно выбрать от 10 до 60 минут.' },
     ],
   },
   faq: {
