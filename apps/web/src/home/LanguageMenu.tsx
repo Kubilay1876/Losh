@@ -95,9 +95,11 @@ export function LanguageMenu({ locale, label, onChange }: Props) {
               aria-checked={l === locale}
               lang={l}
               class="lang-item"
-              onClick={() => {
+              onClick={(e) => {
                 onChange(l);
-                close();
+                // Back to the button for keyboard users only; after a mouse or finger tap it would leave a focus ring behind.
+                if (e.detail === 0) close();
+                else setOpen(false);
               }}
             >
               <span class="lang-name">

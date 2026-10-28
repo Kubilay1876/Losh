@@ -41,11 +41,15 @@ interface Shot {
  */
 const STEP_SHOTS: Partial<Record<PlatformId, Record<number, Shot[]>>> = {
   ios: {
+    1: [{ src: './guide/ios-share-button.webp', width: 300, height: 598, shown: 200 }],
     2: [{ src: './guide/ios-share-sheet.webp', width: 520, height: 924, shown: 240 }],
     3: [
       { src: './guide/ios-add.webp', width: 560, height: 316, shown: 300 },
       { src: './guide/ios-home.webp', width: 360, height: 244, shown: 150 },
     ],
+  },
+  desktop: {
+    1: [{ src: './guide/desktop-install-icon.webp', width: 909, height: 69, shown: 420 }],
   },
 };
 
