@@ -137,7 +137,21 @@ Notlar:
 
 ---
 
-## 7. Sorular (cevabına göre plan şekillenecek)
+## 7. Kararlar (28 Ekim 2026)
+
+| Konu | Karar |
+|---|---|
+| Arayüz | **Preact** |
+| Web PDF izni | Kurulumda istenmez; kullanıcı ilk kez web PDF'i açmak istediğinde istenir (isteğe bağlı izin) |
+| Adres | **`loshreader.vercel.app`** (28 Ekim'de boştu; ilk yayında alınacak) |
+| Gece modu | Hızlı CSS yöntemiyle başla; resimleri koruyan `pageColors` yöntemi Aşama 1'de denenip gösterilecek |
+| Telefon | **iPhone** → mobil testler iOS öncelikli; Share Target iOS'ta yok, "Dosya aç" düğmesi öne çıkacak |
+| GitHub reposu | Kubilay GitHub sitesinden açacak (Aşama 1 sonunda adımlar verilecek), kodu Claude gönderecek |
+| Bağış | Sponsors başvurusu henüz yok → bağlantı **kapalı** başlar, tek ayarla açılacak |
+
+Aşağıdaki sorular yukarıdaki kararlarla cevaplandı.
+
+### Sorulan sorular
 
 1. **Arayüz:** Preact mı (önerim), yoksa hiç framework kullanmayalım mı?
 2. **Web PDF'leri:** "Tüm sitelere erişim" izni kurulumda değil, kullanıcı açınca istensin. Bu yaklaşım uygun mu?
