@@ -150,7 +150,11 @@ export class ReaderController {
   private async fitText(): Promise<void> {
     const doc = this.doc;
     if (!doc) return;
-    this.textBounds ??= measureTextBounds(doc, this.viewer.currentPageNumber, this.viewer.container);
+    this.textBounds ??= measureTextBounds(doc, this.viewer.currentPageNumber, this.viewer.container).catch((err: unknown) => {
+      // Never let this stop a PDF from opening: page width is a fine fallback.
+      console.error(err);
+      return null;
+    });
     const bounds = await this.textBounds;
     if (doc !== this.doc || this.zoomPreset !== 'text-width') return;
     if (!bounds) {
