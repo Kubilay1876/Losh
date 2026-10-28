@@ -2,7 +2,7 @@
 
 Her aşamadan sonra bu listeyi baştan sona dene. Bir madde çalışmazsa hangi madde olduğunu not al.
 
-Hazırlık: terminalde `cd C:UsersadminDesktoplosh` ve `npm.cmd run dev` çalışıyor, tarayıcıda `http://localhost:5173` açık. Test kitabı için bir kez `npm run test-pdf` (proje klasöründe `test-book.pdf` oluşur).
+Hazırlık: terminalde `cd C:\Users\admin\Desktop\losh` ve `npm.cmd run dev` çalışıyor, tarayıcıda `http://localhost:5173` açık. Test kitabı için bir kez `npm.cmd run test-pdf` (proje klasöründe `test-book.pdf` oluşur).
 
 ## Karşılama sayfası
 - [ ] `http://localhost:5173` açılınca önce karşılama sayfası geliyor (Hoş geldin, Gözünü yormadan oku).
