@@ -57,6 +57,28 @@
   padding: 18px 20px;
 }
 
+.home-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.home-brand svg {
+  display: block;
+}
+
+.home-hero-logo {
+  display: block;
+  margin: 0 auto 18px;
+}
+
+@media (max-width: 560px) {
+  .home-hero-logo {
+    width: 104px;
+    height: 104px;
+  }
+}
+
 .home-wordmark {
   font-size: 26px;
   font-weight: 700;

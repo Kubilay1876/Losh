@@ -1,6 +1,6 @@
 import { useEffect } from 'preact/hooks';
 import { PROJECT, SUPPORT, translate, type KeyValueStore, type MessageKey } from '@losh/core';
-import { useSettings } from '@losh/viewer/settings';
+import { Logo, useSettings } from '@losh/viewer/settings';
 import { LanguageMenu } from './LanguageMenu';
 
 const READER_HREF = './app/';
@@ -32,12 +32,16 @@ export function Home({ store }: { store: KeyValueStore }) {
   return (
     <div class="home">
       <header class="home-top">
-        <span class="home-wordmark losh-gradient-text">Losh</span>
+        <span class="home-brand">
+          <Logo size={34} id="home-logo-small" />
+          <span class="home-wordmark losh-gradient-text">Losh</span>
+        </span>
         <LanguageMenu locale={settings.locale} label={t('home.languageMenu')} onChange={(locale) => update({ locale })} />
       </header>
 
       <main>
         <section class="home-hero">
+          <Logo size={132} glow id="home-logo-hero" class="home-hero-logo" />
           <p class="home-eyebrow">{t('home.hello')}</p>
           <h1>{t('home.title')}</h1>
           <p class="home-lead">{t('home.subtitle')}</p>

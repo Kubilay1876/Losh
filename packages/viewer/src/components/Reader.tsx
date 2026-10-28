@@ -5,6 +5,7 @@ import { documentKey } from '../pdf/docKey';
 import { useSettings } from '../useSettings';
 import { isTextField, matchShortcut } from '../shortcuts';
 import { SettingsPanel } from './SettingsPanel';
+import { Logo } from './Logo';
 import { SearchBar } from './SearchBar';
 import { HelpDialog } from './HelpDialog';
 import { IconBook, IconCandle, IconChevronLeft, IconChevronRight, IconHelp, IconMinus, IconMoon, IconOpen, IconPlus, IconSearch, IconSliders, IconSun } from './icons';
@@ -233,11 +234,13 @@ export function Reader({ store, pdfAssetsBase, homeHref }: ReaderProps) {
       <div class="losh-toolbar" role="toolbar" aria-label={t('app.tagline')}>
         {homeHref ? (
           <a class="losh-brand" href={homeHref} title={t('home.back')} aria-label={`${t('app.name')} — ${t('home.back')}`}>
-            Losh
+            <Logo size={28} id="losh-reader-logo" />
+            <span class="losh-brand-text">Losh</span>
           </a>
         ) : (
           <div class="losh-brand" aria-label={t('app.name')}>
-            Losh
+            <Logo size={28} id="losh-reader-logo" />
+            <span class="losh-brand-text">Losh</span>
           </div>
         )}
 

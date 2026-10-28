@@ -74,22 +74,32 @@
 }
 
 .losh-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 650;
   font-size: 19px;
   letter-spacing: 0.02em;
-  background: var(--gradient-bright);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
   padding: 0 6px 0 2px;
   user-select: none;
   text-decoration: none;
   border-radius: 6px;
 }
 
-a.losh-brand:hover {
-  text-decoration: underline;
-  text-underline-offset: 4px;
+.losh-brand svg {
+  display: block;
+  flex: none;
+}
+
+.losh-brand-text {
+  background: var(--gradient-bright);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+a.losh-brand:hover .losh-brand-text {
+  filter: brightness(1.15);
 }
 
 .losh-spacer {
