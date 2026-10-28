@@ -11,7 +11,7 @@ export interface Settings {
   brightness: number;
   /** Percent, 50–150 (100 = unchanged). */
   contrast: number;
-  /** In inverted modes, flip image areas back so photos look natural (experimental). */
+  /** In inverted modes, show colourful photos in natural colours (diagrams and scans still invert). */
   preserveImages: boolean;
   locale: Locale;
   breakReminder: {
@@ -34,7 +34,7 @@ export const DEFAULT_SETTINGS: Settings = {
   warmth: 0,
   brightness: 100,
   contrast: 100,
-  preserveImages: false,
+  preserveImages: true,
   locale: 'tr',
   breakReminder: { enabled: false, intervalMinutes: 20, asked: false },
 };

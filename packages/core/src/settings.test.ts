@@ -35,6 +35,11 @@ describe('sanitizeSettings', () => {
     expect(s.breakReminder.enabled).toBe(false);
   });
 
+  it('shows photos in natural colours by default', () => {
+    expect(DEFAULT_SETTINGS.preserveImages).toBe(true);
+    expect(sanitizeSettings({ preserveImages: false }).preserveImages).toBe(false);
+  });
+
   it('keeps the break reminder off by default', () => {
     expect(DEFAULT_SETTINGS.breakReminder.enabled).toBe(false);
     expect(DEFAULT_SETTINGS.breakReminder.intervalMinutes).toBe(20);

@@ -27,7 +27,8 @@ export function computeFilters(s: Settings): FilterResult {
   return {
     pageFilter: parts.length ? parts.join(' ') : 'none',
     pageTint: mode.pageTint ?? 'transparent',
-    imageRestoreFilter: mode.inverted && s.preserveImages ? 'invert(1) hue-rotate(180deg)' : null,
+    // Undo the inversion, slightly dimmed so photos don't glare on a dark page.
+    imageRestoreFilter: mode.inverted && s.preserveImages ? 'invert(1) hue-rotate(180deg) brightness(0.85)' : null,
     warmOverlay: {
       color: WARM_COLOR,
       opacity: Math.round((s.warmth / 100) * WARM_MAX_OPACITY * 1000) / 1000,

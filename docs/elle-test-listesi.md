@@ -18,7 +18,11 @@ Hazırlık: `npm run dev` çalışıyor, tarayıcıda `http://localhost:5173` a�
 - [ ] Klavyede `1` `2` `3` `4` modları seçiyor, `M` sıradaki moda geçiyor.
 - [ ] Ayarlar (kaydırıcı simgesi ya da `S`): Sıcak ışık, Parlaklık, Kontrast kaydırıcıları anında etki ediyor.
 - [ ] "Varsayılana dön" kaydırıcıları sıfırlıyor.
-- [ ] Gece modunda "resimleri koru" açıkken test kitabının 25. sayfasındaki resim doğal renkli (güneş sarı, gökyüzü mavi); kapalıyken negatif gibi.
+- [ ] Gece modunda (test kitabı, "fotoğrafları doğal renkte göster" açık — varsayılan):
+  - 25. sayfadaki renkli resim doğal renkli (güneş sarı, gökyüzü mavi), biraz kısık;
+  - 10. sayfadaki siyah-beyaz grafik koyu zemin üstünde açık çizgili (beyaz kutu yok);
+  - 2. ve 3. sayfa (taranmış sayfa) koyu zemin, açık yazı (beyaz sayfa yok).
+- [ ] Ayarı kapatınca 25. sayfadaki resim negatif gibi görünüyor.
 - [ ] Sayfa yenilenince seçtiğin mod ve ayarlar korunuyor.
 
 ### Okuma

@@ -61,7 +61,10 @@ export function SettingsPanel({ settings, update, t, onClose }: Props) {
           checked={settings.preserveImages}
           onChange={(e) => update({ preserveImages: (e.currentTarget as HTMLInputElement).checked })}
         />
-        <span>{t('settings.preserveImages')}</span>
+        <span>
+          {t('settings.preserveImages')}
+          <small class="losh-hint">{t('settings.preserveImagesHint')}</small>
+        </span>
       </label>
       <div class="losh-field">
         <label for="losh-locale">

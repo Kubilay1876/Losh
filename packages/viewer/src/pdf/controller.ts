@@ -1,6 +1,7 @@
 import { pdfjs } from './setup';
 import { EventBus, PDFFindController, PDFLinkService, PDFViewer } from 'pdfjs-dist/web/pdf_viewer.mjs';
 import type { PDFDocumentProxy } from 'pdfjs-dist';
+import { classifyPageImages } from './imageClassifier';
 
 export type ZoomValue = 'page-fit' | 'page-width' | number;
 
@@ -41,6 +42,11 @@ export class ReaderController {
       imagesRightClickMinSize: MIN_TRACKED_IMAGE_SIZE,
     });
     this.linkService.setViewer(this.viewer);
+
+    // Decide per image whether night modes show it natural (photos) or inverted (diagrams, scans).
+    const classify = (e: { source: { div: HTMLElement; canvas?: HTMLCanvasElement | null } }) => classifyPageImages(e.source.div, e.source.canvas);
+    this.eventBus.on('textlayerrendered', classify);
+    this.eventBus.on('pagerendered', classify);
 
     this.eventBus.on('pagechanging', (e: { pageNumber: number }) => {
       this.events.onPageChange(e.pageNumber, this.viewer.pagesCount);

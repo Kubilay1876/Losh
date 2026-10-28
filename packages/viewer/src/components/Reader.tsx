@@ -37,6 +37,8 @@ export function Reader({ store, pdfAssetsBase }: ReaderProps) {
   const controllerRef = useRef<ReaderController | null>(null);
   const docKeyRef = useRef<string | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  /** Latest page number, readable from event handlers without waiting for a re-render. */
+  const currentPageRef = useRef(0);
 
   const [status, setStatus] = useState<Status>({ kind: 'empty' });
   const [page, setPage] = useState({ current: 0, total: 0 });
@@ -54,6 +56,7 @@ export function Reader({ store, pdfAssetsBase }: ReaderProps) {
   useEffect(() => {
     const controller = new ReaderController(scrollRef.current!, pdfAssetsBase, {
       onPageChange(current, total) {
+        currentPageRef.current = current;
         setPage({ current, total });
         setPageInput(String(current));
         const key = docKeyRef.current;
@@ -277,9 +280,13 @@ export function Reader({ store, pdfAssetsBase }: ReaderProps) {
               onFocus={(e) => (e.currentTarget as HTMLInputElement).select()}
               onInput={(e) => setPageInput((e.currentTarget as HTMLInputElement).value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') controllerRef.current?.goToPage(Number(pageInput) || page.current);
+                if (e.key === 'Enter') {
+                  controllerRef.current?.goToPage(Number(pageInput) || page.current);
+                  // Hand focus back to the pages so arrow keys work and the next click re-selects the number.
+                  scrollRef.current?.focus();
+                }
               }}
-              onBlur={() => setPageInput(String(page.current))}
+              onBlur={() => setPageInput(String(currentPageRef.current))}
             />
             <span class="losh-page-total">{t('page.of', { total: page.total })}</span>
             <button type="button" class="losh-icon-btn" onClick={() => controllerRef.current?.nextPage()} aria-label={t('page.next')} title={`${t('page.next')} (→)`} disabled={page.current >= page.total}>

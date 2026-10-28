@@ -320,6 +320,13 @@
   color: var(--ui-muted);
 }
 
+.losh-hint {
+  display: block;
+  margin-top: 2px;
+  color: var(--ui-muted);
+  font-size: 12.5px;
+}
+
 /* ---------- Stage & pdf.js viewer ---------- */
 .losh-stage {
   position: relative;
@@ -359,8 +366,8 @@
   pointer-events: none;
 }
 
-/* Night modes: flip image areas back (double inversion) so photos look natural. */
-.losh-restore-images .textLayerImagePlaceholder {
+/* Night modes: flip photo areas back (double inversion) so they look natural. Diagrams and scans stay inverted. */
+.losh-restore-images .textLayerImagePlaceholder[data-losh-image='natural'] {
   opacity: 1 !important;
   backdrop-filter: var(--losh-image-restore);
   pointer-events: none;
@@ -526,9 +533,14 @@
   }
 }
 
-@media (max-width: 760px) {
-  .losh-mode span:not(.losh-swatch),
+@media (max-width: 1180px) {
   .losh-btn:not(.losh-btn-large) span {
+    display: none;
+  }
+}
+
+@media (max-width: 960px) {
+  .losh-mode span:not(.losh-swatch) {
     display: none;
   }
   .losh-mode {
