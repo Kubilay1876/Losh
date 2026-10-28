@@ -10,8 +10,8 @@
     "apps/*"
   ],
   "scripts": {
-    "dev": "npm run dev -w @losh/viewer",
-    "build": "npm run build -w @losh/viewer",
+    "dev": "npm run dev -w @losh/web",
+    "build": "npm run build -w @losh/web",
     "test": "vitest run",
     "typecheck": "tsc -p .",
     "test-pdf": "node scripts/make-test-pdf.mjs"

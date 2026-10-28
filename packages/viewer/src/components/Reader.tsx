@@ -13,6 +13,8 @@ export interface ReaderProps {
   store: KeyValueStore;
   /** URL (relative to the page) of the folder holding pdf.js cmaps/, standard_fonts/, wasm/, iccs/. */
   pdfAssetsBase: string;
+  /** When set, the "Loş" brand links back to this page (the welcome page). */
+  homeHref?: string;
 }
 
 type Status = { kind: 'empty' } | { kind: 'loading' } | { kind: 'ready'; name: string } | { kind: 'error'; message: MessageKey };
@@ -25,7 +27,7 @@ function isPdf(file: File): boolean {
   return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
 }
 
-export function Reader({ store, pdfAssetsBase }: ReaderProps) {
+export function Reader({ store, pdfAssetsBase, homeHref }: ReaderProps) {
   const [settings, update] = useSettings(store);
   const t = useCallback(
     (key: MessageKey, params?: Record<string, string | number>) => translate(settings.locale, key, params),
@@ -228,9 +230,15 @@ export function Reader({ store, pdfAssetsBase }: ReaderProps) {
       {...dropHandlers}
     >
       <div class="losh-toolbar" role="toolbar" aria-label={t('app.tagline')}>
-        <div class="losh-brand" aria-label={t('app.name')}>
-          Loş
-        </div>
+        {homeHref ? (
+          <a class="losh-brand" href={homeHref} title={t('home.back')} aria-label={`${t('app.name')} — ${t('home.back')}`}>
+            Loş
+          </a>
+        ) : (
+          <div class="losh-brand" aria-label={t('app.name')}>
+            Loş
+          </div>
+        )}
 
         <button type="button" class="losh-btn losh-btn-primary" onClick={pickFile} title={`${t('open.button')} (O)`}>
           <IconOpen />

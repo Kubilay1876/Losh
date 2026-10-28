@@ -13,5 +13,5 @@
     "allowImportingTsExtensions": false,
     "types": ["vite/client", "node"]
   },
-  "include": ["packages/*/src", "packages/*/demo", "vitest.config.ts"]
+  "include": ["packages/*/src", "apps/*/src", "apps/*/vite.config.ts", "vitest.config.ts"]
 }

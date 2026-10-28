@@ -82,6 +82,13 @@
   color: var(--ui-accent);
   padding: 0 6px 0 2px;
   user-select: none;
+  text-decoration: none;
+  border-radius: 6px;
+}
+
+a.losh-brand:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .losh-spacer {

@@ -4,7 +4,7 @@ Göz dostu, ücretsiz ve açık kaynak PDF okuyucu. PDF'ler cihazından hiçbir 
 
 *An eye-friendly, free and open-source PDF reader. Your files never leave your device.*
 
-> Durum: geliştirme aşamasında (Aşama 1 — çekirdek ve görüntüleyici). Plan: [docs/asama-0-plan.md](docs/asama-0-plan.md)
+> Durum: geliştirme aşamasında (Aşama 1 tamam: çekirdek, görüntüleyici, karşılama sayfası). Plan: [docs/asama-0-plan.md](docs/asama-0-plan.md)
 
 ## Geliştirme
 
@@ -12,17 +12,18 @@ Gerekenler: [Node.js](https://nodejs.org) 22 veya üstü.
 
 ```sh
 npm install        # bağımlılıkları kur (bir kez)
-npm run dev        # deneme sayfasını aç: http://localhost:5173
+npm run dev        # siteyi aç: http://localhost:5173 (karşılama) → /app/ (okuyucu)
 npm test           # birim testleri
 npm run typecheck  # TypeScript tür denetimi
-npm run build      # derleme (packages/viewer/dist-demo)
+npm run build      # derleme (apps/web/dist)
 npm run test-pdf   # 500 sayfalık test kitabı üret (test-book.pdf)
 ```
 
 ## Yapı
 
 ```
-packages/core     modlar, filtreler, ayarlar, çeviriler (saf TypeScript)
+apps/web          web sitesi: karşılama sayfası (/) ve okuyucu (/app/)
+packages/core     modlar, filtreler, ayarlar, çeviriler, proje ayarları (saf TypeScript)
 packages/viewer   pdf.js tabanlı görüntüleyici + arayüz (Preact)
 scripts/          yardımcı betikler
 docs/             plan ve test listeleri
