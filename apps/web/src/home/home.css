@@ -194,6 +194,241 @@
   padding: 48px 0 16px;
 }
 
+.home h2 + .home-section-intro {
+  margin-top: -12px;
+}
+
+.home-section-intro {
+  max-width: 36em;
+  margin: 0 auto 28px;
+  color: var(--muted);
+  text-align: center;
+  text-wrap: pretty;
+}
+
+.home-section strong {
+  color: var(--text);
+  font-weight: 650;
+}
+
+/* Install guide: one tab per kind of device, the visitor's own one picked first. */
+.home-installed {
+  width: fit-content;
+  margin: -12px auto 24px;
+  padding: 6px 14px;
+  border: 1px solid rgb(120 220 160 / 0.4);
+  border-radius: 999px;
+  color: rgb(160 235 190);
+  font-size: 14px;
+}
+
+.home-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto 16px;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+}
+
+.home-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.home-tab:hover {
+  color: var(--text);
+}
+
+.home-tab[aria-selected='true'] {
+  background: var(--accent-soft);
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--accent-line);
+}
+
+.home-tab-mine {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.home-install-card {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.015)), var(--surface);
+}
+
+.home-steps {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.home-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.home-step-no {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--gradient);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.home-steps li > span:last-child {
+  padding-top: 3px;
+}
+
+.home-install-note {
+  margin: 20px 0 0;
+  padding: 12px 14px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  background: rgb(246 201 69 / 0.07);
+  color: var(--muted);
+  font-size: 14.5px;
+}
+
+/* How-to: numbered cards */
+.home-guide {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: guide;
+}
+
+.home-guide li {
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.015)), var(--surface);
+}
+
+.home-guide-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.home-guide h3 {
+  margin: 14px 0 6px;
+  font-size: 17px;
+  font-weight: 650;
+}
+
+.home-guide p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+/* FAQ: questions that open in place */
+.home-faq {
+  display: grid;
+  gap: 10px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.home-faq details {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.home-faq details[open] {
+  border-color: var(--accent-line);
+}
+
+.home-faq summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 56px;
+  padding: 12px 18px;
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+
+.home-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.home-faq summary:hover {
+  color: var(--accent);
+}
+
+.home-faq-caret {
+  flex: none;
+  opacity: 0.7;
+}
+
+.home-faq details[open] .home-faq-caret {
+  transform: rotate(180deg);
+}
+
+.home-faq details p {
+  margin: 0;
+  padding: 0 18px 18px;
+  color: var(--muted);
+}
+
+@media (max-width: 560px) {
+  .home-tab {
+    padding: 0 12px;
+    font-size: 14px;
+  }
+
+  .home-tab-mine {
+    display: none;
+  }
+
+  .home-install-card {
+    padding: 20px 16px;
+  }
+}
+
 .home-brand svg {
   display: block;
 }
@@ -654,6 +889,20 @@
 
   .home-support-btn:hover {
     translate: 0 -2px;
+  }
+
+  .home-faq-caret {
+    transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  /* `translate`, not `transform`: the scroll reveal owns `transform` on these cards. */
+  .home-guide li {
+    transition: translate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s;
+  }
+
+  .home-guide li:hover {
+    translate: 0 -4px;
+    box-shadow: 0 16px 40px rgb(0 0 0 / 0.35);
   }
 
   .home-nav a {

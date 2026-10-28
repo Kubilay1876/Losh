@@ -3,6 +3,7 @@ import { PROJECT, SUPPORT, translate, type KeyValueStore, type MessageKey } from
 import { Logo, useSettings } from '@losh/viewer/settings';
 import { LanguageMenu } from './LanguageMenu';
 import { NavMenu } from './NavMenu';
+import { FaqSection, GuideSection, InstallSection } from './Sections';
 import { useReveal } from './useReveal';
 
 /** Stagger delay for reveal animations. */
@@ -134,14 +135,9 @@ export function Home({ store }: { store: KeyValueStore }) {
           </ul>
         </section>
 
-        {/* Phase 4: install guide, how-to and FAQ fill these. */}
-        {NAV.filter((n) => n.id !== 'support').map((n) => (
-          <section class="home-section" id={n.id} key={n.id} aria-labelledby={`home-${n.id}-title`}>
-            <h2 id={`home-${n.id}-title`} data-reveal>
-              {t(n.label)}
-            </h2>
-          </section>
-        ))}
+        <InstallSection locale={settings.locale} title={t('home.nav.install')} />
+        <GuideSection locale={settings.locale} title={t('home.nav.guide')} />
+        <FaqSection locale={settings.locale} title={t('home.nav.faq')} />
 
         <section class="home-support" id="support" aria-labelledby="home-support-title" data-reveal>
           <h2 id="home-support-title">{t('home.support.title')}</h2>
