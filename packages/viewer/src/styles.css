@@ -622,6 +622,88 @@ a.losh-brand:hover .losh-brand-text {
 }
 
 
+/* Eye break (20-20-20): the page dims and softens, a ring counts the 20 seconds. */
+.losh-break {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgb(10 6 18 / 0.72);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.losh-break-card {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  width: min(360px, 100%);
+  padding: 26px 24px 18px;
+  border: 1px solid var(--accent-line);
+  border-radius: 22px;
+  background: var(--ui-surface);
+  box-shadow: var(--ui-shadow);
+  text-align: center;
+}
+
+.losh-break-title {
+  margin: 0;
+  color: var(--ui-accent);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.losh-break-ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.losh-break-ring svg {
+  display: block;
+  transform: rotate(-90deg);
+}
+
+.losh-break-track,
+.losh-break-progress {
+  fill: none;
+  stroke-width: 8;
+}
+
+.losh-break-track {
+  stroke: rgb(255 255 255 / 0.08);
+}
+
+.losh-break-progress {
+  stroke: var(--ui-accent);
+  stroke-linecap: round;
+}
+
+.losh-break-count {
+  position: absolute;
+  font-size: 40px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.losh-break-text {
+  min-height: 3em;
+  margin: 0;
+  font-size: 17px;
+  text-wrap: balance;
+}
+
+.losh-break-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+}
+
 .losh-loading {
   color: var(--ui-muted);
   font-size: 16px;
@@ -942,6 +1024,32 @@ a.losh-brand:hover .losh-brand-text {
 
   .losh-dropzone {
     animation: losh-fade 0.15s ease-out both;
+  }
+
+  .losh-break {
+    animation: losh-fade 0.6s ease-out both;
+  }
+
+  .losh-break-card {
+    animation: losh-rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .losh-break-progress {
+    transition: stroke-dashoffset 1s linear;
+  }
+
+  /* While resting, the ring breathes slowly: something calm to look at, never something to chase. */
+  .losh-break-card:not([data-done='true']) .losh-break-ring {
+    animation: losh-breathe 5s ease-in-out infinite;
+  }
+
+  .losh-break-text {
+    animation: losh-fade 0.5s ease-out both;
+  }
+
+  @keyframes losh-breathe {
+    0%, 100% { scale: 1; }
+    50% { scale: 1.04; }
   }
 
   .losh-keep,

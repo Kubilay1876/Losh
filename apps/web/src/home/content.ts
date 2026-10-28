@@ -85,7 +85,7 @@ const tr: HomeContent = {
       { q: 'Gece modunda fotoğraflar neden ters dönmüyor?', a: "Losh fotoğrafları doğal renginde bırakır, yazıyı ve çizimleri koyulaştırır. İstemezsen Ayarlar'dan kapatabilirsin." },
       { q: "Şifreli PDF'leri açabilir miyim?", a: 'Henüz hayır.' },
       { q: "Losh'ta sakladığım her şeyi nasıl silerim?", a: 'Okuyucuda **{settings} → {clear}** son okunanları siler. Tarayıcıdan bu sitenin verilerini silersen ayarların ve kaldığın sayfalar da gider.' },
-      { q: 'Göz ağrıma iyi gelir mi?', a: 'Losh ekranı daha yumuşak gösterir ama tıbbi bir ürün değildir. Ağrın sürerse bir göz doktoruna başvur.' },
+      { q: 'Göz ağrıma iyi gelir mi?', a: 'Losh ekranı daha yumuşak gösterir ve istersen 20 dakikada bir göz molası hatırlatır: 20 saniye uzağa bakıp göz kırparsın. Ama tıbbi bir ürün değildir; ağrın sürerse bir göz doktoruna başvur.' },
     ],
   },
 };
@@ -150,7 +150,7 @@ const en: HomeContent = {
       { q: "Why don't photos turn negative in night mode?", a: 'Losh keeps photos in their natural colours and darkens text and drawings. You can turn this off in Settings.' },
       { q: 'Can I open password-protected PDFs?', a: 'Not yet.' },
       { q: 'How do I delete everything Losh has stored?', a: "In the reader, **{settings} → {clear}** removes your recently read books. Clearing this site's data in your browser also removes your settings and saved pages." },
-      { q: 'Will it help my sore eyes?', a: 'Losh makes the screen gentler, but it is not a medical product. If the pain continues, see an eye doctor.' },
+      { q: 'Will it help my sore eyes?', a: 'Losh makes the screen gentler and, if you like, reminds you to take an eye break every 20 minutes: look far away for 20 seconds and blink. But it is not a medical product; if the pain continues, see an eye doctor.' },
     ],
   },
 };
@@ -215,7 +215,7 @@ const es: HomeContent = {
       { q: '¿Por qué las fotos no se invierten en modo noche?', a: 'Losh deja las fotos en sus colores naturales y oscurece el texto y los dibujos. Puedes desactivarlo en Ajustes.' },
       { q: '¿Puedo abrir PDF protegidos con contraseña?', a: 'Todavía no.' },
       { q: '¿Cómo borro todo lo que Losh ha guardado?', a: 'En el lector, **{settings} → {clear}** elimina los libros leídos recientemente. Si borras los datos de este sitio en tu navegador, también se van tus ajustes y páginas guardadas.' },
-      { q: '¿Me ayudará con el dolor de ojos?', a: 'Losh hace la pantalla más suave, pero no es un producto médico. Si el dolor continúa, consulta a un oftalmólogo.' },
+      { q: '¿Me ayudará con el dolor de ojos?', a: 'Losh hace la pantalla más suave y, si quieres, te recuerda hacer un descanso visual cada 20 minutos: mirar lejos 20 segundos y parpadear. Pero no es un producto médico; si el dolor continúa, consulta a un oftalmólogo.' },
     ],
   },
 };
@@ -280,7 +280,7 @@ const fr: HomeContent = {
       { q: 'Pourquoi les photos ne s’inversent-elles pas en mode nuit ?', a: 'Losh garde les photos dans leurs couleurs naturelles et assombrit le texte et les dessins. Vous pouvez le désactiver dans les réglages.' },
       { q: 'Puis-je ouvrir des PDF protégés par mot de passe ?', a: 'Pas encore.' },
       { q: 'Comment effacer tout ce que Losh a gardé ?', a: 'Dans le lecteur, **{settings} → {clear}** efface les livres lus récemment. Effacer les données de ce site dans votre navigateur supprime aussi vos réglages et pages enregistrées.' },
-      { q: 'Est-ce que ça soulage mes yeux fatigués ?', a: 'Losh rend l’écran plus doux, mais ce n’est pas un produit médical. Si la douleur persiste, consultez un ophtalmologue.' },
+      { q: 'Est-ce que ça soulage mes yeux fatigués ?', a: 'Losh rend l’écran plus doux et, si vous le souhaitez, vous rappelle une pause toutes les 20 minutes : regarder au loin 20 secondes et cligner des yeux. Mais ce n’est pas un produit médical ; si la douleur persiste, consultez un ophtalmologue.' },
     ],
   },
 };
@@ -345,7 +345,7 @@ const ru: HomeContent = {
       { q: 'Почему в ночном режиме фото не становятся негативом?', a: 'Losh оставляет фотографии в естественных цветах и затемняет текст и рисунки. Это можно отключить в настройках.' },
       { q: 'Можно ли открыть PDF с паролем?', a: 'Пока нет.' },
       { q: 'Как удалить всё, что сохранил Losh?', a: 'В читалке **{settings} → {clear}** удаляет недавние книги. Если очистить данные этого сайта в браузере, удалятся и настройки, и сохранённые страницы.' },
-      { q: 'Поможет ли это при усталости глаз?', a: 'Losh делает экран мягче, но это не медицинский продукт. Если боль не проходит, обратитесь к офтальмологу.' },
+      { q: 'Поможет ли это при усталости глаз?', a: 'Losh делает экран мягче и, если хотите, каждые 20 минут напоминает о перерыве: 20 секунд смотреть вдаль и моргать. Но это не медицинский продукт; если боль не проходит, обратитесь к офтальмологу.' },
     ],
   },
 };

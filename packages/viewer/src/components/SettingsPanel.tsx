@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'preact/hooks';
-import { DEFAULT_SETTINGS, KEEP_RECENT, LOCALE_NAMES, LOCALES, MODES, SETTINGS_LIMITS, type KeepRecent, type Locale, type MessageKey, type Settings } from '@losh/core';
+import { BREAK_INTERVALS, DEFAULT_SETTINGS, KEEP_RECENT, LOCALE_NAMES, LOCALES, MODES, SETTINGS_LIMITS, type KeepRecent, type Locale, type MessageKey, type Settings } from '@losh/core';
 import { RECENT_LIMIT } from '../library';
 import { IconClose } from './icons';
 import { formatSize } from './RecentList';
@@ -113,6 +113,33 @@ export function SettingsPanel({ settings, update, t, onClose, recentBytes, onCle
               </>
             )}
           </small>
+        </div>
+      )}
+      <label class="losh-check">
+        <input
+          type="checkbox"
+          checked={settings.breakReminder.enabled}
+          onChange={(e) => update({ breakReminder: { ...settings.breakReminder, enabled: (e.currentTarget as HTMLInputElement).checked, asked: true } })}
+        />
+        <span>
+          {t('settings.breakReminder')}
+          <small class="losh-hint">{t('settings.breakHint')}</small>
+        </span>
+      </label>
+      {settings.breakReminder.enabled && (
+        <div class="losh-field">
+          <select
+            id="losh-break-every"
+            aria-label={t('settings.breakReminder')}
+            value={settings.breakReminder.intervalMinutes}
+            onChange={(e) => update({ breakReminder: { ...settings.breakReminder, intervalMinutes: Number((e.currentTarget as HTMLSelectElement).value) } })}
+          >
+            {[...new Set([...BREAK_INTERVALS, settings.breakReminder.intervalMinutes])].sort((a, b) => a - b).map((m) => (
+              <option value={m} key={m}>
+                {t('settings.breakInterval', { minutes: m })}
+              </option>
+            ))}
+          </select>
         </div>
       )}
       <button

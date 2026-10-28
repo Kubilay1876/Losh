@@ -1,17 +1,19 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks';
-import { computeFilters, MODE_IDS, STORAGE_KEYS, translate, type KeyValueStore, type MessageKey } from '@losh/core';
+import { BREAK_SNOOZE_MINUTES, computeFilters, MODE_IDS, STORAGE_KEYS, translate, type KeyValueStore, type MessageKey } from '@losh/core';
 import { ReaderController, type SearchState, type ZoomValue } from '../pdf/controller';
 import { documentKey } from '../pdf/docKey';
 import { enableAxisLock } from '../pdf/axisLock';
 import { enablePinchZoom } from '../pdf/pinch';
 import type { RecentLibrary } from '../library';
 import { useSettings } from '../useSettings';
+import { useBreakReminder } from '../useBreakReminder';
 import { isTextField, matchShortcut } from '../shortcuts';
 import { SettingsPanel } from './SettingsPanel';
 import { Logo } from './Logo';
 import { SearchBar } from './SearchBar';
 import { HelpDialog } from './HelpDialog';
 import { RecentList, type RecentItem } from './RecentList';
+import { BreakReminder } from './BreakReminder';
 import { IconBook, IconCandle, IconChevronLeft, IconChevronRight, IconFitText, IconHelp, IconMinus, IconMoon, IconOpen, IconPlus, IconSearch, IconSliders, IconSun } from './icons';
 
 export interface ReaderProps {
@@ -35,6 +37,8 @@ const MODE_ICONS = { normal: IconSun, sepia: IconBook, night: IconMoon, darkSepi
 /** Phones and tablets: a tap on the page hides the bars, so the PDF gets the whole screen. */
 const TOUCH_UI_QUERY = '(max-width: 640px), (pointer: coarse)';
 const BARS_HINT_DELAY_MS = 1500;
+/** Reading time before asking, once, whether to turn on eye break reminders. */
+const BREAK_ASK_AFTER_MS = 45_000;
 
 function isPdf(file: File): boolean {
   return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
@@ -88,6 +92,7 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
   const [barsAway, setBarsAway] = useState(false);
   const [barsEverAway, setBarsEverAway] = useState(false);
   const [barsHintSeen, setBarsHintSeen] = useState(true);
+  const [breakAsk, setBreakAsk] = useState(false);
 
   // --- pdf.js controller -------------------------------------------------
   // A layout effect, so the controller exists before the first paint: a file picked or shared
@@ -365,13 +370,13 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
 
   // Tell touch users once, when nothing else is on screen, that a tap hides the menus.
   useEffect(() => {
-    if (!touchUi || !hasDoc || barsHintSeen || keepAsk || toast) return;
+    if (!touchUi || !hasDoc || barsHintSeen || keepAsk || breakAsk || toast) return;
     const id = setTimeout(() => {
       setToast(t('bars.hint'));
       markBarsHintSeen();
     }, BARS_HINT_DELAY_MS);
     return () => clearTimeout(id);
-  }, [touchUi, hasDoc, barsHintSeen, keepAsk, toast, t, markBarsHintSeen]);
+  }, [touchUi, hasDoc, barsHintSeen, keepAsk, breakAsk, toast, t, markBarsHintSeen]);
 
   const onPageTap = (e: MouseEvent) => {
     if (!touchUi || !hasDoc || searchOpen || settingsOpen) return;
@@ -383,6 +388,26 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
     setBarsAway(!barsHidden);
     if (!barsHintSeen) markBarsHintSeen();
   };
+
+  // --- eye breaks (20-20-20) ---------------------------------------------------------
+  const breaks = settings.breakReminder;
+  const breakReminder = useBreakReminder(breaks.enabled, breaks.intervalMinutes, hasDoc);
+  const setBreaks = (patch: Partial<typeof breaks>) => update({ breakReminder: { ...breaks, ...patch } });
+
+  // Ask once, after a little reading, when nothing else is asking for attention.
+  useEffect(() => {
+    if (!hasDoc || breaks.asked || keepAsk || breakAsk || toast) return;
+    // Measured with Date.now() rather than one long timer, so time in the background is not counted twice.
+    let last = Date.now();
+    let read = 0;
+    const id = setInterval(() => {
+      const now = Date.now();
+      if (!document.hidden) read += now - last;
+      last = now;
+      if (read >= BREAK_ASK_AFTER_MS) setBreakAsk(true);
+    }, 1000);
+    return () => clearInterval(id);
+  }, [hasDoc, breaks.asked, keepAsk, breakAsk, toast]);
 
   const zoomSelectValue = typeof zoom.preset === 'string' ? zoom.preset : 'custom';
   const zoomPercent = Math.round(zoom.scale * 100);
@@ -633,6 +658,25 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
           input.value = '';
         }}
       />
+
+      {breakAsk && !keepAsk && !breaks.asked && (
+        <div class="losh-keep" role="region" aria-label={t('break.title')}>
+          <p class="losh-keep-question">{t('break.ask', { minutes: breaks.intervalMinutes })}</p>
+          <p class="losh-hint">{t('break.askNote')}</p>
+          <div class="losh-keep-actions">
+            <button type="button" class="losh-text-btn" onClick={() => setBreaks({ asked: true, enabled: false })}>
+              {t('break.no')}
+            </button>
+            <button type="button" class="losh-btn losh-btn-primary" onClick={() => setBreaks({ asked: true, enabled: true })}>
+              {t('break.yes')}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {breakReminder.due && hasDoc && (
+        <BreakReminder t={t} onDone={breakReminder.rested} onSnooze={() => breakReminder.snooze(BREAK_SNOOZE_MINUTES)} />
+      )}
 
       {keepAsk && (
         <div class="losh-keep" role="region" aria-label={t('recent.title')}>

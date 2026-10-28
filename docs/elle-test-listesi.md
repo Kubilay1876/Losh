@@ -87,3 +87,18 @@ Bunlar yayındaki sitede denenir: https://loshreader.vercel.app
 ### Android ve bilgisayar (cihaz varsa)
 - [ ] Android Chrome: siteye girince "Uygulamayı yükle" çıkıyor; kurulunca bir PDF'i **Paylaş** menüsünden Losh'a gönderince okuyucuda açılıyor.
 - [ ] Bilgisayar Chrome/Edge: adres çubuğundaki "Yükle" simgesiyle kurulabiliyor; kurulu Losh, PDF dosyalarında "Birlikte aç" listesinde çıkıyor.
+
+## Aşama 4 — Karşılama sayfası ve göz molası
+
+### Karşılama sayfası
+- [ ] Üstte **Kurulum · Nasıl kullanılır · SSS · Destek ol** var (telefonda ☰ menüsünde); tıklayınca sayfa o bölüme kayıyor, çubuk üstte sabit kalıyor.
+- [ ] Kurulum bölümünde kendi cihazının sekmesi açık ve **Senin cihazın** yazıyor; iPhone adımlarının altında ekran görüntüleri var.
+- [ ] SSS'de bir soruya dokununca cevabı açılıyor.
+- [ ] Dil değiştirince bölümlerin hepsi o dile geçiyor.
+
+### Göz molası (20-20-20)
+- [ ] Bir PDF açıp ~45 saniye okuyunca bir kez "20 dakikada bir kısa bir göz molası hatırlatayım mı?" diye soruyor; cevap verince bir daha sormuyor.
+- [ ] "Evet" dedikten sonra 20 dakika okuyunca sayfa kararıyor, 20 saniyelik sayaç çıkıyor: önce "uzağa bak", sonra "göz kırp", sonunda "Gözlerin dinlendi".
+- [ ] **5 dk sonra** 5 dakika sonra yeniden hatırlatıyor; **Atla** kapatıyor.
+- [ ] Losh arka plandayken ya da telefon kilitliyken süre işlemiyor.
+- [ ] Görünüm ayarlarında hatırlatıcı açılıp kapanıyor ve aralığı (10–60 dk) değiştirilebiliyor.
