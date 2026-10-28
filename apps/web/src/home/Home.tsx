@@ -1,7 +1,8 @@
-import { useEffect, useRef } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { PROJECT, SUPPORT, translate, type KeyValueStore, type MessageKey } from '@losh/core';
 import { Logo, useSettings } from '@losh/viewer/settings';
 import { LanguageMenu } from './LanguageMenu';
+import { NavMenu } from './NavMenu';
 import { useReveal } from './useReveal';
 
 /** Stagger delay for reveal animations. */
@@ -15,6 +16,14 @@ const FEATURES: { title: MessageKey; text: MessageKey; icon: string }[] = [
   { title: 'home.feature.free.title', text: 'home.feature.free.text', icon: 'M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9z' },
 ];
 
+/** Page sections in the top bar; ids are the same in every language so links can be shared. */
+const NAV: { id: string; label: MessageKey }[] = [
+  { id: 'install', label: 'home.nav.install' },
+  { id: 'guide', label: 'home.nav.guide' },
+  { id: 'faq', label: 'home.nav.faq' },
+  { id: 'support', label: 'home.nav.support' },
+];
+
 const PREVIEWS = [
   { mode: 'normal', label: 'mode.normal' },
   { mode: 'sepia', label: 'mode.sepia' },
@@ -26,6 +35,14 @@ export function Home({ store }: { store: KeyValueStore }) {
   const t = (key: MessageKey, params?: Record<string, string | number>) => translate(settings.locale, key, params);
   const rootRef = useRef<HTMLDivElement>(null);
   useReveal(rootRef, loaded);
+  const [stuck, setStuck] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setStuck(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => {
     document.documentElement.lang = settings.locale;
@@ -36,13 +53,25 @@ export function Home({ store }: { store: KeyValueStore }) {
   if (!loaded) return null;
 
   return (
-    <div class="home" ref={rootRef}>
-      <header class="home-top">
-        <span class="home-brand">
-          <Logo size={34} id="home-logo-small" />
-          <span class="home-wordmark losh-gradient-text">Losh</span>
-        </span>
-        <LanguageMenu locale={settings.locale} label={t('home.languageMenu')} onChange={(locale) => update({ locale })} />
+    <div class="home" id="top" ref={rootRef}>
+      <header class={`home-top${stuck ? ' is-stuck' : ''}`}>
+        <div class="home-top-inner">
+          <a class="home-brand" href="#top" aria-label={t('app.name')}>
+            <Logo size={34} id="home-logo-small" />
+            <span class="home-wordmark losh-gradient-text">Losh</span>
+          </a>
+          <nav class="home-nav" aria-label={t('home.nav.label')}>
+            {NAV.map((n) => (
+              <a key={n.id} href={`#${n.id}`}>
+                {t(n.label)}
+              </a>
+            ))}
+          </nav>
+          <div class="home-top-end">
+            <LanguageMenu locale={settings.locale} label={t('home.languageMenu')} onChange={(locale) => update({ locale })} />
+            <NavMenu links={NAV.map((n) => ({ href: `#${n.id}`, label: t(n.label) }))} label={t('home.nav.menu')} />
+          </div>
+        </div>
       </header>
 
       <main>
@@ -105,7 +134,16 @@ export function Home({ store }: { store: KeyValueStore }) {
           </ul>
         </section>
 
-        <section class="home-support" aria-labelledby="home-support-title" data-reveal>
+        {/* Phase 4: install guide, how-to and FAQ fill these. */}
+        {NAV.filter((n) => n.id !== 'support').map((n) => (
+          <section class="home-section" id={n.id} key={n.id} aria-labelledby={`home-${n.id}-title`}>
+            <h2 id={`home-${n.id}-title`} data-reveal>
+              {t(n.label)}
+            </h2>
+          </section>
+        ))}
+
+        <section class="home-support" id="support" aria-labelledby="home-support-title" data-reveal>
           <h2 id="home-support-title">{t('home.support.title')}</h2>
           <p>{t('home.support.text')}</p>
           {SUPPORT.enabled ? (

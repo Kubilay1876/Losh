@@ -414,6 +414,7 @@ a.losh-brand:hover .losh-brand-text {
 /* Night modes: flip photo areas back (double inversion) so they look natural. Diagrams and scans stay inverted. */
 .losh-restore-images .textLayerImagePlaceholder[data-losh-image='natural'] {
   opacity: 1 !important;
+  -webkit-backdrop-filter: var(--losh-image-restore);
   backdrop-filter: var(--losh-image-restore);
   pointer-events: none;
 }
@@ -466,8 +467,8 @@ a.losh-brand:hover .losh-brand-text {
   border: 2px dashed rgb(255 255 255 / 0.22);
   border-radius: 18px;
   background: rgb(15 10 26 / 0.45);
-  backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
   max-width: 460px;
   width: 100%;
 }
@@ -511,8 +512,8 @@ a.losh-brand:hover .losh-brand-text {
   border: 1px solid var(--ui-border);
   border-radius: 18px;
   background: rgb(15 10 26 / 0.55);
-  backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
 }
 
 .losh-recent h2 {

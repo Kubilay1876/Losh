@@ -98,6 +98,12 @@ const tr = {
   'home.footer.source': 'Kaynak kodu',
   'home.footer.medical': 'Losh bir okuma kolaylığı aracıdır, tıbbi bir ürün değildir. Göz ağrın sürerse bir göz doktoruna başvur.',
   'home.languageMenu': 'Dil seç',
+  'home.nav.label': 'Sayfa bölümleri',
+  'home.nav.install': 'Kurulum',
+  'home.nav.guide': 'Nasıl kullanılır',
+  'home.nav.faq': 'SSS',
+  'home.nav.support': 'Destek ol',
+  'home.nav.menu': 'Menü',
 };
 
 export type MessageKey = keyof typeof tr;
@@ -201,6 +207,12 @@ const en: Messages = {
   'home.footer.source': 'Source code',
   'home.footer.medical': 'Losh is a reading aid, not a medical product. If your eyes keep hurting, see an eye doctor.',
   'home.languageMenu': 'Choose language',
+  'home.nav.label': 'Page sections',
+  'home.nav.install': 'Install',
+  'home.nav.guide': 'How to use',
+  'home.nav.faq': 'FAQ',
+  'home.nav.support': 'Support',
+  'home.nav.menu': 'Menu',
 };
 
 const es: Messages = {
@@ -301,6 +313,12 @@ const es: Messages = {
   'home.footer.source': 'Código fuente',
   'home.footer.medical': 'Losh es una ayuda para la lectura, no un producto médico. Si te siguen doliendo los ojos, consulta a un oftalmólogo.',
   'home.languageMenu': 'Elegir idioma',
+  'home.nav.label': 'Secciones de la página',
+  'home.nav.install': 'Instalar',
+  'home.nav.guide': 'Cómo usar',
+  'home.nav.faq': 'Preguntas',
+  'home.nav.support': 'Apoyar',
+  'home.nav.menu': 'Menú',
 };
 
 const fr: Messages = {
@@ -401,6 +419,12 @@ const fr: Messages = {
   'home.footer.source': 'Code source',
   'home.footer.medical': 'Losh est une aide à la lecture, pas un produit médical. Si vos yeux restent douloureux, consultez un ophtalmologue.',
   'home.languageMenu': 'Choisir la langue',
+  'home.nav.label': 'Sections de la page',
+  'home.nav.install': 'Installer',
+  'home.nav.guide': "Mode d'emploi",
+  'home.nav.faq': 'FAQ',
+  'home.nav.support': 'Soutenir',
+  'home.nav.menu': 'Menu',
 };
 
 const ru: Messages = {
@@ -501,6 +525,12 @@ const ru: Messages = {
   'home.footer.source': 'Исходный код',
   'home.footer.medical': 'Losh — помощник для чтения, а не медицинское изделие. Если глаза продолжают болеть, обратитесь к офтальмологу.',
   'home.languageMenu': 'Выбрать язык',
+  'home.nav.label': 'Разделы страницы',
+  'home.nav.install': 'Установка',
+  'home.nav.guide': 'Как пользоваться',
+  'home.nav.faq': 'Вопросы',
+  'home.nav.support': 'Поддержать',
+  'home.nav.menu': 'Меню',
 };
 
 export const MESSAGES: Record<Locale, Messages> = { tr, en, es, fr, ru };
