@@ -1,0 +1,17 @@
+{
+  "name": "@losh/viewer",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "src/index.tsx",
+  "types": "src/index.tsx",
+  "scripts": {
+    "dev": "vite demo",
+    "build": "vite build demo"
+  },
+  "dependencies": {
+    "@losh/core": "^0.1.0",
+    "pdfjs-dist": "^6.4.299",
+    "preact": "^11.1.0"
+  }
+}

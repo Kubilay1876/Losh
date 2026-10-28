@@ -1,0 +1,27 @@
+{
+  "name": "losh",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Losh — eye-friendly PDF reader (free, open source, offline)",
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @losh/viewer",
+    "build": "npm run build -w @losh/viewer",
+    "test": "vitest run",
+    "typecheck": "tsc -p .",
+    "test-pdf": "node scripts/make-test-pdf.mjs"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.6",
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vite-plugin-static-copy": "^4.1.1",
+    "vitest": "^5.0.5"
+  }
+}
