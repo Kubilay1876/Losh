@@ -1,6 +1,6 @@
 import { pdfjs } from './setup';
-import { EventBus, PDFFindController, PDFLinkService, PDFViewer } from 'pdfjs-dist/web/pdf_viewer.mjs';
-import type { PDFDocumentProxy } from 'pdfjs-dist';
+import { EventBus, PDFFindController, PDFLinkService, PDFViewer } from 'pdfjs-dist/legacy/web/pdf_viewer.mjs';
+import type { PDFDocumentProxy } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { classifyPageImages } from './imageClassifier';
 
 export type ZoomValue = 'page-fit' | 'page-width' | number;
