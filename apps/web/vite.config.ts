@@ -10,11 +10,12 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const pdfjsDir = path.dirname(createRequire(import.meta.url).resolve('pdfjs-dist/package.json'));
 
-/** All files under `dir`, as forward-slash paths relative to it. */
+/** All files under `dir`, as sorted forward-slash paths relative to it (sorted so hashes match on every OS). */
 function listFiles(dir: string): string[] {
   return readdirSync(dir, { recursive: true, withFileTypes: true })
     .filter((e) => e.isFile())
-    .map((e) => path.relative(dir, path.join(e.parentPath, e.name)).split(path.sep).join('/'));
+    .map((e) => path.relative(dir, path.join(e.parentPath, e.name)).split(path.sep).join('/'))
+    .sort();
 }
 
 /**
