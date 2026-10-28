@@ -71,6 +71,13 @@ export const IconPlus = () => (
   </svg>
 );
 
+/** Lines of text reaching right up to the page edges. */
+export const IconFitText = () => (
+  <svg {...base}>
+    <path d="M3 4v16M21 4v16M7 8h10M7 12h10M7 16h6" />
+  </svg>
+);
+
 export const IconMinus = () => (
   <svg {...base}>
     <path d="M5 12h14" />

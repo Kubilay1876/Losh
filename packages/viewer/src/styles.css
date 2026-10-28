@@ -180,6 +180,12 @@ a.losh-brand:hover .losh-brand-text {
   color: var(--ui-text);
 }
 
+.losh-icon-btn[aria-pressed='true'] {
+  background: var(--accent-soft);
+  color: var(--ui-text);
+  box-shadow: inset 0 0 0 1px var(--accent-line);
+}
+
 .losh-icon-btn:disabled {
   opacity: 0.4;
   cursor: default;
@@ -377,8 +383,8 @@ a.losh-brand:hover .losh-brand-text {
   overflow: auto;
   background: var(--losh-viewer-bg);
   --page-bg-color: var(--losh-page-bg);
-  /* Fingers scroll the pages; a pinch is ours (pinch.ts) and zooms the PDF, not the whole app. */
-  touch-action: pan-x pan-y;
+  /* The browser scrolls only up and down; sideways swipes (axisLock.ts) and pinch zoom (pinch.ts) are ours. */
+  touch-action: pan-y;
 }
 
 .losh-scroll:focus-visible {

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { computeFilters, MODE_IDS, STORAGE_KEYS, translate, type KeyValueStore, type MessageKey } from '@losh/core';
 import { ReaderController, type SearchState, type ZoomValue } from '../pdf/controller';
 import { documentKey } from '../pdf/docKey';
+import { enableAxisLock } from '../pdf/axisLock';
 import { enablePinchZoom } from '../pdf/pinch';
 import type { RecentLibrary } from '../library';
 import { useSettings } from '../useSettings';
@@ -11,7 +12,7 @@ import { Logo } from './Logo';
 import { SearchBar } from './SearchBar';
 import { HelpDialog } from './HelpDialog';
 import { RecentList, type RecentItem } from './RecentList';
-import { IconBook, IconCandle, IconChevronLeft, IconChevronRight, IconHelp, IconMinus, IconMoon, IconOpen, IconPlus, IconSearch, IconSliders, IconSun } from './icons';
+import { IconBook, IconCandle, IconChevronLeft, IconChevronRight, IconFitText, IconHelp, IconMinus, IconMoon, IconOpen, IconPlus, IconSearch, IconSliders, IconSun } from './icons';
 
 export interface ReaderProps {
   store: KeyValueStore;
@@ -112,7 +113,9 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
       range: () => controller.zoomRange(),
       zoomBy: (factor, origin) => controller.zoomBy(factor, origin),
     });
+    const stopAxisLock = enableAxisLock(scrollRef.current!);
     return () => {
+      stopAxisLock();
       stopPinch();
       controller.destroy();
     };
@@ -188,7 +191,7 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
         const saved = await store.get<{ page?: number }>(STORAGE_KEYS.position(key));
         const startPage = typeof saved?.page === 'number' ? saved.page : 1;
         docKeyRef.current = null;
-        await controller.open(bytes, startPage);
+        await controller.open(bytes, startPage, settings.fitText ? 'text-width' : 'page-width');
         docKeyRef.current = key;
         setStatus({ kind: 'ready', name: file.name });
         document.title = `${file.name} — ${translate(settings.locale, 'app.name')}`;
@@ -200,7 +203,7 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
         setStatus({ kind: 'error', message: name === 'PasswordException' ? 'error.password' : 'error.load' });
       }
     },
-    [store, settings.locale, rememberFile],
+    [store, settings.locale, settings.fitText, rememberFile],
   );
 
   // Files from outside arrive through this once; route them to the latest openFile.
@@ -484,9 +487,13 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
               value={zoomSelectValue === 'custom' ? String(zoom.preset) : zoomSelectValue}
               onChange={(e) => {
                 const v = (e.currentTarget as HTMLSelectElement).value;
-                controllerRef.current?.setZoom(v === 'page-fit' || v === 'page-width' ? v : Number(v));
+                if (v === 'text-width' || v === 'page-width' || v === 'page-fit') {
+                  if (settings.fitText !== (v === 'text-width')) update({ fitText: v === 'text-width' });
+                  controllerRef.current?.setZoom(v);
+                } else controllerRef.current?.setZoom(Number(v));
               }}
             >
+              <option value="text-width">{t('zoom.textWidth')}</option>
               <option value="page-width">{t('zoom.pageWidth')}</option>
               <option value="page-fit">{t('zoom.pageFit')}</option>
               {zoomSelectValue === 'custom' && !ZOOM_PERCENTS.includes(zoomPercent) && (
@@ -500,6 +507,20 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
             </select>
             <button type="button" class="losh-icon-btn" onClick={() => controllerRef.current?.zoomIn()} aria-label={t('zoom.in')} title={`${t('zoom.in')} (+)`}>
               <IconPlus />
+            </button>
+            <button
+              type="button"
+              class="losh-icon-btn"
+              aria-pressed={zoom.preset === 'text-width'}
+              aria-label={t('zoom.textWidth')}
+              title={t('zoom.textWidth')}
+              onClick={() => {
+                const on = zoom.preset !== 'text-width';
+                update({ fitText: on });
+                controllerRef.current?.setZoom(on ? 'text-width' : 'page-width');
+              }}
+            >
+              <IconFitText />
             </button>
           </div>
         )}

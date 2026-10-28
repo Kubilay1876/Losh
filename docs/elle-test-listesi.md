@@ -77,6 +77,9 @@ Bunlar yayındaki sitede denenir: https://loshreader.vercel.app
 - [ ] PDF açıkken sayfaya **bir kez dokununca** üst ve alt çubuk kayarak kayboluyor, PDF bütün ekranı kaplıyor; yazı yerinden oynamıyor. Bir daha dokununca çubuklar geri geliyor.
 - [ ] İlk PDF'te bir kez "Menüleri gizlemek ya da geri getirmek için sayfaya bir kez dokun." ipucu çıkıyor, sonra bir daha çıkmıyor.
 - [ ] PDF'in son sayfasının en altı alt çubuğun arkasında kalmıyor.
+- [ ] Üstteki **Yazıya sığdır** düğmesine (iki dikey çizgi arasında satırlar) basınca sayfanın boş kenarları ekran dışına çıkıyor, yazı ekranı kenardan kenara dolduruyor; düğme basılı görünüyor. Bir daha basınca eski haline dönüyor.
+- [ ] Yazıya sığdır açıkken açılan bir sonraki PDF de yazıya sığdırılmış açılıyor.
+- [ ] Yakınlaştırıp sayfa ekrandan genişken aşağı kaydırınca sayfa **sağa sola kaymıyor**; belirgin şekilde yana kaydırınca yana gidiyor.
 - [ ] Ayarlar alttan yukarı kayan bir panel olarak açılıyor.
 - [ ] Sayfa numarası kutusuna dokununca ekran kendi kendine büyümüyor.
 - [ ] Telefonu yan çevirince de düzen bozulmuyor.

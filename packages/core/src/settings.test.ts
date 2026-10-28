@@ -50,4 +50,10 @@ describe('sanitizeSettings', () => {
     expect(sanitizeSettings({ keepRecent: 'always' }).keepRecent).toBe('always');
     expect(sanitizeSettings({ keepRecent: 'sometimes' }).keepRecent).toBe('ask');
   });
+
+  it('opens PDFs at page width unless "fit text" was chosen', () => {
+    expect(DEFAULT_SETTINGS.fitText).toBe(false);
+    expect(sanitizeSettings({ fitText: true }).fitText).toBe(true);
+    expect(sanitizeSettings({ fitText: 'yes' }).fitText).toBe(false);
+  });
 });

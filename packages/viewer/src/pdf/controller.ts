@@ -3,7 +3,8 @@ import { EventBus, PDFFindController, PDFLinkService, PDFViewer } from 'pdfjs-di
 import type { PDFDocumentProxy } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { classifyPageImages } from './imageClassifier';
 
-export type ZoomValue = 'page-fit' | 'page-width' | number;
+/** 'text-width': the text column, without the empty page margins, fills the screen width. */
+export type ZoomValue = 'page-fit' | 'page-width' | 'text-width' | number;
 
 export interface SearchState {
   query: string;
@@ -21,6 +22,10 @@ export interface ControllerEvents {
 /** Images smaller than this (PDF points) are treated as decoration and not tracked. */
 const MIN_TRACKED_IMAGE_SIZE = 24;
 const ZOOM_STEPS = [0.5, 0.67, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2, 2.5, 3, 4];
+/** Room left beside the text in 'text-width' zoom, in CSS pixels. */
+const TEXT_MARGIN_PX = 10;
+/** Pages looked at to find where the text column sits. */
+const TEXT_SAMPLE_PAGES = 8;
 
 /** Thin wrapper around pdf.js' PDFViewer: lazy page rendering, text layer, search and zoom come from pdf.js. */
 export class ReaderController {
@@ -30,6 +35,8 @@ export class ReaderController {
   private readonly viewer: PDFViewer;
   private doc: PDFDocumentProxy | null = null;
   private zoomPreset: ZoomValue = 'page-width';
+  /** Left and right edge of the text column, as fractions of the page width; measured once per document. */
+  private textBounds: Promise<[number, number] | null> | null = null;
   private search: SearchState = { query: '', current: 0, total: 0, notFound: false };
 
   constructor(container: HTMLDivElement, private readonly assetsBase: string, private readonly events: ControllerEvents) {
@@ -71,8 +78,9 @@ export class ReaderController {
   }
 
   /** Opens a PDF. `data` is consumed (transferred to the worker). */
-  async open(data: Uint8Array, startPage = 1): Promise<number> {
+  async open(data: Uint8Array, startPage = 1, zoom: ZoomValue = this.zoomPreset): Promise<number> {
     await this.close();
+    this.zoomPreset = zoom;
     const base = new URL(this.assetsBase, document.baseURI).href;
     const doc = await pdfjs.getDocument({
       data,
@@ -88,8 +96,9 @@ export class ReaderController {
     this.viewer.setDocument(doc);
     this.linkService.setDocument(doc);
     await ready;
-    this.viewer.currentScaleValue = this.zoomPreset === 'page-fit' || this.zoomPreset === 'page-width' ? this.zoomPreset : String(this.zoomPreset);
+    this.applyZoom(this.zoomPreset);
     if (startPage > 1 && startPage <= doc.numPages) this.viewer.currentPageNumber = startPage;
+    if (this.zoomPreset === 'text-width') await this.fitText();
     this.events.onPageChange(this.viewer.currentPageNumber, doc.numPages);
     return doc.numPages;
   }
@@ -98,6 +107,7 @@ export class ReaderController {
     if (!this.doc) return;
     const doc = this.doc;
     this.doc = null;
+    this.textBounds = null;
     this.viewer.setDocument(null as unknown as PDFDocumentProxy);
     this.linkService.setDocument(null);
     await doc.loadingTask.destroy();
@@ -127,7 +137,37 @@ export class ReaderController {
   setZoom(value: ZoomValue): void {
     this.zoomPreset = value;
     if (!this.doc) return;
-    this.viewer.currentScaleValue = typeof value === 'number' ? String(value) : value;
+    if (value === 'text-width') void this.fitText();
+    else this.applyZoom(value);
+  }
+
+  private applyZoom(value: ZoomValue): void {
+    // Until the text column is measured, 'text-width' starts out as page width.
+    this.viewer.currentScaleValue = value === 'text-width' ? 'page-width' : typeof value === 'number' ? String(value) : value;
+  }
+
+  /** Zooms so the text column fills the screen width and lines it up with the left edge. */
+  private async fitText(): Promise<void> {
+    const doc = this.doc;
+    if (!doc) return;
+    this.textBounds ??= measureTextBounds(doc, this.viewer.currentPageNumber, this.viewer.container);
+    const bounds = await this.textBounds;
+    if (doc !== this.doc || this.zoomPreset !== 'text-width') return;
+    if (!bounds) {
+      // Try again next time: a scan can only be measured once its pages are drawn.
+      this.textBounds = null;
+      this.viewer.currentScaleValue = 'page-width';
+      return;
+    }
+    const container = this.viewer.container;
+    const pageView = this.viewer.getPageView(this.viewer.currentPageNumber - 1);
+    const textWidth = (bounds[1] - bounds[0]) * pageView.viewport.width;
+    const wanted = (this.viewer.currentScale * (container.clientWidth - 2 * TEXT_MARGIN_PX)) / textWidth;
+    this.viewer.currentScaleValue = String(Math.min(ZOOM_STEPS[ZOOM_STEPS.length - 1], wanted));
+    // Every page shares the width, so lining up the current one lines up all of them.
+    const page = pageView.div.getBoundingClientRect();
+    const textLeft = page.left + pageView.div.clientLeft + bounds[0] * pageView.viewport.width;
+    container.scrollLeft += textLeft - container.getBoundingClientRect().left - TEXT_MARGIN_PX;
   }
 
   zoomIn(): void {
@@ -189,4 +229,71 @@ export class ReaderController {
   destroy(): void {
     void this.close();
   }
+}
+
+/**
+ * Where the text column sits on the page, as [left, right] fractions of the page width.
+ * Uses the PDF's text on pages near `around`; scans without text fall back to the ink on the rendered pages.
+ * Pages are combined loosely (25th/75th percentile) so one odd page, like a wide table, does not decide for all.
+ */
+async function measureTextBounds(doc: PDFDocumentProxy, around: number, container: HTMLElement): Promise<[number, number] | null> {
+  const first = Math.max(1, Math.min(around - 2, doc.numPages - TEXT_SAMPLE_PAGES + 1));
+  const last = Math.min(doc.numPages, first + TEXT_SAMPLE_PAGES - 1);
+  const found: [number, number][] = [];
+  for (let n = first; n <= last; n++) {
+    const page = await doc.getPage(n);
+    if (page.rotate % 180 !== 0) continue;
+    const [x0, , x1] = page.view;
+    let left = Infinity;
+    let right = -Infinity;
+    for (const item of (await page.getTextContent()).items) {
+      if (!('str' in item) || !item.str.trim() || item.width <= 0) continue;
+      left = Math.min(left, item.transform[4]);
+      right = Math.max(right, item.transform[4] + item.width);
+    }
+    if (right > left) found.push([(left - x0) / (x1 - x0), (right - x0) / (x1 - x0)]);
+  }
+  if (!found.length) {
+    for (const canvas of container.querySelectorAll<HTMLCanvasElement>('.page canvas')) {
+      const ink = inkBounds(canvas);
+      if (ink) found.push(ink);
+    }
+  }
+  if (!found.length) return null;
+  const lefts = found.map((b) => b[0]).sort((a, b) => a - b);
+  const rights = found.map((b) => b[1]).sort((a, b) => b - a);
+  const i = Math.floor((found.length - 1) / 4);
+  const left = Math.max(0, lefts[i]);
+  const right = Math.min(1, rights[i]);
+  // Not worth it when the text already spans almost the whole page.
+  return right - left > 0.2 && right - left < 0.95 ? [left, right] : null;
+}
+
+/** Left and right edge of the dark marks on a rendered page, from a small copy of it. */
+function inkBounds(canvas: HTMLCanvasElement): [number, number] | null {
+  if (!canvas.width || !canvas.height) return null;
+  const w = 200;
+  const h = Math.max(1, Math.round((canvas.height / canvas.width) * w));
+  const small = document.createElement('canvas');
+  small.width = w;
+  small.height = h;
+  const ctx = small.getContext('2d', { willReadFrequently: true });
+  if (!ctx) return null;
+  ctx.drawImage(canvas, 0, 0, w, h);
+  const { data } = ctx.getImageData(0, 0, w, h);
+  const minInk = Math.max(2, h * 0.004);
+  let left = -1;
+  let right = -1;
+  for (let x = 0; x < w; x++) {
+    let dark = 0;
+    for (let y = 0; y < h; y++) {
+      const p = (y * w + x) * 4;
+      if (data[p] * 0.3 + data[p + 1] * 0.59 + data[p + 2] * 0.11 < 160) dark++;
+    }
+    if (dark >= minInk) {
+      if (left < 0) left = x;
+      right = x + 1;
+    }
+  }
+  return left < 0 ? null : [left / w, right / w];
 }

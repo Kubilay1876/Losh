@@ -19,6 +19,8 @@ export interface Settings {
   preserveImages: boolean;
   locale: Locale;
   keepRecent: KeepRecent;
+  /** Open PDFs zoomed so the text column (without the empty page margins) fills the screen width. */
+  fitText: boolean;
   breakReminder: {
     enabled: boolean;
     intervalMinutes: number;
@@ -42,6 +44,7 @@ export const DEFAULT_SETTINGS: Settings = {
   preserveImages: true,
   locale: 'tr',
   keepRecent: 'ask',
+  fitText: false,
   breakReminder: { enabled: false, intervalMinutes: 20, asked: false },
 };
 
@@ -67,6 +70,7 @@ export function sanitizeSettings(raw: unknown): Settings {
     preserveImages: bool(r.preserveImages, d.preserveImages),
     locale: (LOCALES as readonly unknown[]).includes(r.locale) ? (r.locale as Locale) : d.locale,
     keepRecent: (KEEP_RECENT as readonly unknown[]).includes(r.keepRecent) ? (r.keepRecent as KeepRecent) : d.keepRecent,
+    fitText: bool(r.fitText, d.fitText),
     breakReminder: {
       enabled: bool(br.enabled, d.breakReminder.enabled),
       intervalMinutes: clampNumber(br.intervalMinutes, SETTINGS_LIMITS.intervalMinutes, d.breakReminder.intervalMinutes),

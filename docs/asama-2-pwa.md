@@ -13,7 +13,7 @@ Yayın adresi: https://loshreader.vercel.app (her `git push` sonrası Vercel ken
 | **Son okunanlar** | Kullanıcı isterse açtığı PDF'ler cihazda (IndexedDB, tarayıcının içindeki veritabanı) saklanır; metroda internetsiz yeniden açılır. İlk PDF'te sorulur, en fazla 12 dosya tutulur, kaplanan yer gösterilir, tek tek ya da toplu silinir. | `packages/viewer/src/library.ts`, `RecentList.tsx` |
 | **Paylaş → Losh (Android)** | Kurulu Losh, Android'in paylaş menüsünde çıkar; paylaşılan PDF okuyucuda açılır. Dosya hiçbir sunucuya gitmez: service worker onu cihazdaki bir önbelleğe koyar, okuyucu oradan alır. | `share_target` (manifest) + `sw.js` + `apps/web/src/app/main.tsx` |
 | **Birlikte aç (bilgisayar)** | Chrome/Edge'de kurulu Losh, PDF dosyaları için "Birlikte aç" listesinde çıkar. | `file_handlers` (manifest) + `launchQueue` |
-| **Telefon arayüzü** | Modlar ve sayfa numarası altta (tek elle), 44 px dokunma alanları, ayarlar alttan açılan panel, iki parmakla yakınlaştırma sadece PDF'i büyütür, sayfaya bir dokunuşla üst ve alt çubuk gizlenir (okuma modu), iPhone çentiği ve saat çubuğu için boşluk. | `packages/viewer/src/styles.css`, `pdf/pinch.ts` |
+| **Telefon arayüzü** | Modlar ve sayfa numarası altta (tek elle), 44 px dokunma alanları, ayarlar alttan açılan panel, iki parmakla yakınlaştırma sadece PDF'i büyütür, sayfaya bir dokunuşla üst ve alt çubuk gizlenir (okuma modu), **Yazıya sığdır** (boş kenarları kırpıp yazıyı ekran genişliğine büyütür), yön kilidi (aşağı kaydırırken sayfa yana kaymaz), iPhone çentiği ve saat çubuğu için boşluk. | `packages/viewer/src/styles.css`, `pdf/pinch.ts` |
 
 ### Güncellemeler nasıl gelir
 Sayfalar önce internetten istenir (3 saniye içinde gelirse yeni sürüm görünür), gelmezse cihazdaki kopya açılır.
