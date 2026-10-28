@@ -194,18 +194,16 @@ a.losh-brand:hover {
   font-weight: 560;
 }
 
-.losh-swatch {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 1px solid rgb(255 255 255 / 0.25);
+.losh-mode-icon {
+  display: inline-flex;
   flex: none;
 }
 
-[data-swatch='normal'] .losh-swatch { background: #ffffff; }
-[data-swatch='sepia'] .losh-swatch { background: #efe2c6; }
-[data-swatch='night'] .losh-swatch { background: linear-gradient(135deg, #1a1a1a 50%, #e6e6e6 50%); }
-[data-swatch='darkSepia'] .losh-swatch { background: linear-gradient(135deg, #2a241d 50%, #e3d3b8 50%); }
+/* Each mode icon carries a hint of its colour. */
+[data-swatch='normal'] .losh-mode-icon { color: #fff4c2; }
+[data-swatch='sepia'] .losh-mode-icon { color: #ecd3a0; }
+[data-swatch='night'] .losh-mode-icon { color: #c9b8ff; }
+[data-swatch='darkSepia'] .losh-mode-icon { color: #f6a75a; }
 
 .losh-page-input {
   width: 3.4em;
@@ -547,7 +545,7 @@ a.losh-brand:hover {
 }
 
 @media (max-width: 960px) {
-  .losh-mode span:not(.losh-swatch) {
+  .losh-mode span:not(.losh-mode-icon) {
     display: none;
   }
   .losh-mode {

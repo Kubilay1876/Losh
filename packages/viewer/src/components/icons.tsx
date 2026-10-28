@@ -77,6 +77,35 @@ export const IconMinus = () => (
   </svg>
 );
 
+// Reading mode icons (16 px).
+const small = { ...base, width: 16, height: 16, 'stroke-width': 2 } as const;
+
+export const IconSun = () => (
+  <svg {...small}>
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2.5v2M12 19.5v2M4.6 4.6 6 6M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4 6 18M18 6l1.4-1.4" />
+  </svg>
+);
+
+export const IconBook = () => (
+  <svg {...small}>
+    <path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5C17 4.5 14 5 12 6.5zM12 6.5v13" />
+  </svg>
+);
+
+export const IconMoon = () => (
+  <svg {...small}>
+    <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
+  </svg>
+);
+
+export const IconCandle = () => (
+  <svg {...small}>
+    <path d="M12 2.5c1.8 2 2.6 3.4 2.6 4.7a2.6 2.6 0 0 1-5.2 0c0-1.3.8-2.7 2.6-4.7z" />
+    <path d="M9 12h6v9.5H9zM12 10v2" />
+  </svg>
+);
+
 export const IconClose = () => (
   <svg {...base}>
     <path d="M6 6l12 12M18 6 6 18" />

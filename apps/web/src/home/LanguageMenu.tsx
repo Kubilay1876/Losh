@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { LOCALE_NAMES, LOCALES, type Locale } from '@losh/core';
+import { Flag } from './Flag';
 
 interface Props {
   locale: Locale;
@@ -99,7 +100,10 @@ export function LanguageMenu({ locale, label, onChange }: Props) {
                 close();
               }}
             >
-              <span>{LOCALE_NAMES[l]}</span>
+              <span class="lang-name">
+                <Flag locale={l} />
+                {LOCALE_NAMES[l]}
+              </span>
               {l === locale && (
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d="m5 12 5 5 9-10" />

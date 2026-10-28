@@ -139,6 +139,28 @@
   outline-offset: -2px;
 }
 
+.lang-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.flag {
+  display: inline-flex;
+  width: 21px;
+  height: 14px;
+  flex: none;
+  overflow: hidden;
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.18);
+}
+
+.flag svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 .lang-item[aria-checked='true'] {
   color: var(--accent);
   font-weight: 600;

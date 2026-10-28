@@ -7,7 +7,7 @@ import { isTextField, matchShortcut } from '../shortcuts';
 import { SettingsPanel } from './SettingsPanel';
 import { SearchBar } from './SearchBar';
 import { HelpDialog } from './HelpDialog';
-import { IconChevronLeft, IconChevronRight, IconHelp, IconMinus, IconOpen, IconPlus, IconSearch, IconSliders } from './icons';
+import { IconBook, IconCandle, IconChevronLeft, IconChevronRight, IconHelp, IconMinus, IconMoon, IconOpen, IconPlus, IconSearch, IconSliders, IconSun } from './icons';
 
 export interface ReaderProps {
   store: KeyValueStore;
@@ -22,6 +22,7 @@ type Status = { kind: 'empty' } | { kind: 'loading' } | { kind: 'ready'; name: s
 const POSITION_SAVE_DELAY_MS = 500;
 const TOAST_MS = 3500;
 const ZOOM_PERCENTS = [50, 75, 100, 125, 150, 200, 300];
+const MODE_ICONS = { normal: IconSun, sepia: IconBook, night: IconMoon, darkSepia: IconCandle } as const;
 
 function isPdf(file: File): boolean {
   return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
@@ -256,7 +257,7 @@ export function Reader({ store, pdfAssetsBase, homeHref }: ReaderProps) {
               onClick={() => update({ mode: id })}
               title={`${t(`mode.${id}` as MessageKey)} (${i + 1})`}
             >
-              <span class="losh-swatch" aria-hidden="true" />
+              <span class="losh-mode-icon">{MODE_ICONS[id]()}</span>
               <span>{t(`mode.${id}` as MessageKey)}</span>
             </button>
           ))}

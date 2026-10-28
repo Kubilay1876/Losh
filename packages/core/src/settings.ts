@@ -1,6 +1,6 @@
 import { isModeId, type ModeId } from './modes';
 
-export const LOCALES = ['tr', 'en'] as const;
+export const LOCALES = ['tr', 'en', 'es', 'fr', 'ru'] as const;
 export type Locale = (typeof LOCALES)[number];
 
 export interface Settings {
