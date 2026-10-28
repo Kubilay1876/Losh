@@ -31,7 +31,7 @@ export function Home({ store }: { store: KeyValueStore }) {
   return (
     <div class="home">
       <header class="home-top">
-        <span class="home-wordmark">Loş</span>
+        <span class="home-wordmark losh-gradient-text">Loş</span>
         <button type="button" class="home-lang" onClick={() => update({ locale: settings.locale === 'tr' ? 'en' : 'tr' })}>
           {t('home.switchLanguage')}
         </button>

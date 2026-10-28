@@ -1,4 +1,5 @@
 import 'pdfjs-dist/web/pdf_viewer.css';
+import './theme.css';
 import './styles.css';
 import { render } from 'preact';
 import { Reader, type ReaderProps } from './components/Reader';

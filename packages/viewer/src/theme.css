@@ -1,0 +1,57 @@
+/*
+ * Losh theme — shared by the welcome page and the reader. Change colours here only.
+ * Look: deep violet night with a soft violet → magenta → peach → yellow glow and a fine grain.
+ */
+:root {
+  color-scheme: dark;
+
+  --bg: #0f0a1a;
+  --surface: #181026;
+  --surface-2: #221636;
+  --glass: rgb(255 255 255 / 0.045);
+  --text: #efe7f7;
+  --muted: #a99bbd;
+  --border: #33244a;
+  --hover: #2a1c40;
+
+  --violet: #7b2cff;
+  --magenta: #e0219d;
+  --peach: #ff8a5c;
+  --yellow: #f6c945;
+
+  --accent: var(--yellow);
+  --accent-text: #1a0b2e;
+  --accent-soft: rgb(246 201 69 / 0.14);
+  --accent-line: rgb(246 201 69 / 0.42);
+
+  --gradient: linear-gradient(115deg, var(--violet) 0%, #b81fe0 38%, var(--magenta) 58%, var(--peach) 80%, var(--yellow) 100%);
+  /* Brighter version for small text such as the wordmark. */
+  --gradient-bright: linear-gradient(115deg, #c86bff 0%, #ff5fc8 40%, var(--peach) 70%, var(--yellow) 100%);
+  --shadow: 0 12px 40px rgb(0 0 0 / 0.5);
+  --glow: 0 10px 40px rgb(246 201 69 / 0.28);
+  --danger: #ff8a8a;
+
+  /* Fine film grain (SVG noise), laid over gradients. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  /* The abstract glow: violet top-left, magenta top-right, yellow and peach at the bottom, black corner bottom-left. */
+  --aurora:
+    radial-gradient(70% 70% at 10% 0%, rgb(110 25 255 / 0.85), transparent 72%),
+    radial-gradient(60% 65% at 95% 0%, rgb(226 30 200 / 0.72), transparent 72%),
+    radial-gradient(60% 50% at 55% 100%, rgb(246 201 69 / 0.6), transparent 72%),
+    radial-gradient(45% 50% at 92% 80%, rgb(255 128 90 / 0.5), transparent 72%),
+    radial-gradient(50% 55% at 0% 100%, rgb(0 0 0 / 0.9), transparent 72%),
+    linear-gradient(160deg, #3a137a 0%, #2a0f4d 45%, #1a0f22 100%);
+}
+
+html {
+  background: var(--bg);
+}
+
+/* Gradient text for the "Loş" wordmark. */
+.losh-gradient-text {
+  background: var(--gradient-bright);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

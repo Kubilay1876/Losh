@@ -1,3 +1,4 @@
+import '@losh/viewer/theme.css';
 import './home.css';
 import { render } from 'preact';
 import { createLocalStore } from '@losh/viewer/settings';

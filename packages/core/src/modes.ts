@@ -21,7 +21,7 @@ export const MODES: Record<ModeId, ModeDef> = {
     pageFilter: '',
     pageTint: null,
     pageBg: '#ffffff',
-    viewerBg: '#3a3733',
+    viewerBg: '#1e1729',
     inverted: false,
   },
   sepia: {
@@ -29,7 +29,7 @@ export const MODES: Record<ModeId, ModeDef> = {
     pageFilter: 'contrast(0.94)',
     pageTint: '#f4e4c6',
     pageBg: '#efe0c4',
-    viewerBg: '#4a4239',
+    viewerBg: '#241b27',
     inverted: false,
   },
   night: {
@@ -37,7 +37,7 @@ export const MODES: Record<ModeId, ModeDef> = {
     pageFilter: 'invert(0.9) hue-rotate(180deg)',
     pageTint: null,
     pageBg: '#1a1a1a',
-    viewerBg: '#121212',
+    viewerBg: '#0d0a12',
     inverted: true,
   },
   darkSepia: {
@@ -45,7 +45,7 @@ export const MODES: Record<ModeId, ModeDef> = {
     pageFilter: 'invert(0.88) hue-rotate(180deg) sepia(0.45)',
     pageTint: null,
     pageBg: '#2a241d',
-    viewerBg: '#17130f',
+    viewerBg: '#120d10',
     inverted: true,
   },
 };
