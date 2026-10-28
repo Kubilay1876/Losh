@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { PROJECT, SUPPORT, translate, type KeyValueStore, type MessageKey } from '@losh/core';
+import { SUPPORT, translate, type KeyValueStore, type MessageKey } from '@losh/core';
 import { Logo, useSettings } from '@losh/viewer/settings';
 import { LanguageMenu } from './LanguageMenu';
 import { NavMenu } from './NavMenu';
+import { Footer } from './Footer';
 import { FaqSection, GuideSection, InstallSection } from './Sections';
 import { useReveal } from './useReveal';
 
@@ -152,15 +153,7 @@ export function Home({ store }: { store: KeyValueStore }) {
         </section>
       </main>
 
-      <footer class="home-footer" data-reveal>
-        <p>
-          {t('home.footer.maker', { name: PROJECT.maker })} ·{' '}
-          <a href={PROJECT.githubUrl} target="_blank" rel="noopener noreferrer">
-            GitHub
-          </a>
-        </p>
-        <p class="home-medical">{t('home.footer.medical')}</p>
-      </footer>
+      <Footer t={t} privacyHref="./privacy/" />
     </div>
   );
 }

@@ -70,6 +70,7 @@ export default defineConfig({
       input: {
         home: path.join(here, 'index.html'),
         app: path.join(here, 'app/index.html'),
+        privacy: path.join(here, 'privacy/index.html'),
       },
     },
   },

@@ -421,7 +421,8 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
       lang={settings.locale}
       {...dropHandlers}
     >
-      <div class="losh-toolbar" role="toolbar" aria-label={t('app.tagline')}>
+      {/* A header landmark, so screen reader users can jump to the controls (role="toolbar" would promise arrow-key navigation). */}
+      <header class="losh-toolbar" aria-label={t('app.tagline')}>
         {homeHref ? (
           <a class="losh-brand" href={homeHref} title={t('home.back')} aria-label={`${t('app.name')} — ${t('home.back')}`}>
             <Logo size={28} id="losh-reader-logo" />
@@ -569,7 +570,7 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
         <button type="button" class="losh-icon-btn losh-help-btn" onClick={() => setHelpOpen(true)} aria-label={t('help.open')} title={`${t('help.open')} (?)`}>
           <IconHelp />
         </button>
-      </div>
+      </header>
 
       {searchOpen && hasDoc && (
         <SearchBar
@@ -596,7 +597,7 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
       )}
 
       <main class="losh-stage" ref={stageRef}>
-        <div class="losh-scroll" ref={scrollRef} tabIndex={0} aria-label={status.kind === 'ready' ? status.name : t('app.name')} onClick={onPageTap}>
+        <div class="losh-scroll" ref={scrollRef} tabIndex={0} role="region" aria-label={status.kind === 'ready' ? status.name : t('app.name')} onClick={onPageTap}>
           <div class="pdfViewer" />
         </div>
         {/* Blend layers cost phones smooth scrolling, so they exist only while they change something. */}

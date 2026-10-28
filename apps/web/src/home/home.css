@@ -185,6 +185,53 @@
   }
 }
 
+/* Privacy page: a calm, readable column of text. */
+.home-top-end-alone {
+  margin-left: auto;
+}
+
+.home .home-doc {
+  max-width: 720px;
+  padding-top: 40px;
+  padding-bottom: 56px;
+}
+
+.home-doc h1 {
+  margin: 0 0 6px;
+  font-size: clamp(30px, 5vw, 42px);
+  line-height: 1.15;
+}
+
+.home-doc-date {
+  margin: 0 0 28px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.home .home-doc h2 {
+  margin: 28px 0 8px;
+  text-align: left;
+  font-size: 20px;
+}
+
+.home-doc p {
+  margin: 0;
+  color: rgb(239 231 247 / 0.82);
+}
+
+.home-doc strong {
+  color: var(--text);
+}
+
+.home-doc a {
+  color: var(--accent);
+  text-underline-offset: 3px;
+}
+
+.home-doc-back {
+  margin-top: 36px !important;
+}
+
 /* Sections the top bar jumps to land below the bar, not under it. */
 .home [id] {
   scroll-margin-top: 84px;

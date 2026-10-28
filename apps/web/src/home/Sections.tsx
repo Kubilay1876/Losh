@@ -1,32 +1,10 @@
 import { useState } from 'preact/hooks';
-import { translate, type Locale, type MessageKey } from '@losh/core';
+import type { Locale } from '@losh/core';
 import { HOME_CONTENT, type PlatformId } from './content';
+import { Rich } from './Rich';
 
 /** Delay for the scroll reveal of the n-th item. */
 const delay = (ms: number) => ({ '--d': `${ms}ms` }) as Record<string, string>;
-
-/** Button names that the texts mention as {start}, {choose}…, taken from the app itself. */
-const UI_NAMES: Record<string, MessageKey> = {
-  start: 'home.start',
-  choose: 'open.choose',
-  normal: 'mode.normal',
-  sepia: 'mode.sepia',
-  night: 'mode.night',
-  darkSepia: 'mode.darkSepia',
-  recent: 'recent.title',
-  settings: 'settings.title',
-  clear: 'recent.clear',
-  breakReminder: 'settings.breakReminder',
-};
-
-function fill(text: string, locale: Locale): string {
-  return text.replace(/\{(\w+)\}/g, (m, name: string) => (UI_NAMES[name] ? translate(locale, UI_NAMES[name]) : m));
-}
-
-/** A text with {name} placeholders filled in and **bold** parts. */
-function Rich({ text, locale }: { text: string; locale: Locale }) {
-  return <>{fill(text, locale).split('**').map((part, i) => (i % 2 ? <strong key={i}>{part}</strong> : part))}</>;
-}
 
 interface Shot {
   src: string;
@@ -122,7 +100,8 @@ export function InstallSection({ locale, title }: { locale: Locale; title: strin
                         width={shot.width}
                         height={shot.height}
                         style={{ width: `${shot.shown}px` }}
-                        alt={fill(step, locale).replaceAll('**', '')}
+                        // The step text right above says what the picture shows.
+                        alt=""
                         loading="lazy"
                         decoding="async"
                       />
