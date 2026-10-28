@@ -18,11 +18,36 @@ const UI_NAMES: Record<string, MessageKey> = {
   clear: 'recent.clear',
 };
 
+function fill(text: string, locale: Locale): string {
+  return text.replace(/\{(\w+)\}/g, (m, name: string) => (UI_NAMES[name] ? translate(locale, UI_NAMES[name]) : m));
+}
+
 /** A text with {name} placeholders filled in and **bold** parts. */
 function Rich({ text, locale }: { text: string; locale: Locale }) {
-  const filled = text.replace(/\{(\w+)\}/g, (m, name: string) => (UI_NAMES[name] ? translate(locale, UI_NAMES[name]) : m));
-  return <>{filled.split('**').map((part, i) => (i % 2 ? <strong key={i}>{part}</strong> : part))}</>;
+  return <>{fill(text, locale).split('**').map((part, i) => (i % 2 ? <strong key={i}>{part}</strong> : part))}</>;
 }
+
+interface Shot {
+  src: string;
+  width: number;
+  height: number;
+  /** Width on the page, in CSS pixels. */
+  shown: number;
+}
+
+/**
+ * Screenshots under the install steps, by step index. Taken on a Turkish iPhone; the yellow frame
+ * marks what to tap, which sits in the same place in every language.
+ */
+const STEP_SHOTS: Partial<Record<PlatformId, Record<number, Shot[]>>> = {
+  ios: {
+    2: [{ src: './guide/ios-share-sheet.webp', width: 520, height: 924, shown: 240 }],
+    3: [
+      { src: './guide/ios-add.webp', width: 560, height: 316, shown: 300 },
+      { src: './guide/ios-home.webp', width: 360, height: 244, shown: 150 },
+    ],
+  },
+};
 
 function detectPlatform(): PlatformId {
   const ua = navigator.userAgent;
@@ -83,6 +108,22 @@ export function InstallSection({ locale, title }: { locale: Locale; title: strin
               </span>
               <span>
                 <Rich text={step} locale={locale} />
+                {STEP_SHOTS[shown]?.[i] && (
+                  <span class="home-shots">
+                    {STEP_SHOTS[shown][i].map((shot) => (
+                      <img
+                        key={shot.src}
+                        src={shot.src}
+                        width={shot.width}
+                        height={shot.height}
+                        style={{ width: `${shot.shown}px` }}
+                        alt={fill(step, locale).replaceAll('**', '')}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    ))}
+                  </span>
+                )}
               </span>
             </li>
           ))}

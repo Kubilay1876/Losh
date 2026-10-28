@@ -311,6 +311,23 @@
   padding-top: 3px;
 }
 
+.home-shots {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.home-shots img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.35);
+}
+
 .home-install-note {
   margin: 20px 0 0;
   padding: 12px 14px;

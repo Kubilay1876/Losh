@@ -36,7 +36,7 @@ const tr: HomeContent = {
         steps: [
           "**Safari**'de loshreader.vercel.app adresini aç.",
           'Alttaki **Paylaş** düğmesine dokun (yukarı ok olan kare).',
-          "Listeyi biraz aşağı kaydır ve **Ana Ekrana Ekle**'yi seç.",
+          "**Ana Ekrana Ekle**'yi seç (görmüyorsan listeyi biraz aşağı kaydır).",
           "Sağ üstteki **Ekle**'ye dokun. Losh artık ana ekranında.",
         ],
         note: "Safari'de açtığın Losh ile ana ekrandaki Losh ayrı hafıza kullanır. Kitaplarını ana ekrandaki Losh'ta saklaman daha iyi olur.",
@@ -101,7 +101,7 @@ const en: HomeContent = {
         steps: [
           'Open loshreader.vercel.app in **Safari**.',
           'Tap the **Share** button at the bottom (the square with an arrow pointing up).',
-          'Scroll the list down a little and choose **Add to Home Screen**.',
+          'Choose **Add to Home Screen** (scroll the list down a little if you don\x27t see it).',
           'Tap **Add** in the top right. Losh is now on your home screen.',
         ],
         note: 'Losh in Safari and Losh on the home screen keep separate storage. It is best to keep your books in the home screen Losh.',
@@ -166,7 +166,7 @@ const es: HomeContent = {
         steps: [
           'Abre loshreader.vercel.app en **Safari**.',
           'Toca el botón **Compartir** de abajo (el cuadrado con una flecha hacia arriba).',
-          'Desplaza un poco la lista y elige **Añadir a pantalla de inicio**.',
+          'Elige **Añadir a pantalla de inicio** (si no lo ves, desplaza un poco la lista).',
           'Toca **Añadir** arriba a la derecha. Losh ya está en tu pantalla de inicio.',
         ],
         note: 'Losh en Safari y Losh en la pantalla de inicio guardan los datos por separado. Es mejor guardar tus libros en el Losh de la pantalla de inicio.',
@@ -231,7 +231,7 @@ const fr: HomeContent = {
         steps: [
           'Ouvrez loshreader.vercel.app dans **Safari**.',
           'Touchez le bouton **Partager** en bas (le carré avec une flèche vers le haut).',
-          'Faites défiler un peu la liste et choisissez **Sur l’écran d’accueil**.',
+          'Choisissez **Sur l’écran d’accueil** (faites défiler un peu la liste si vous ne le voyez pas).',
           'Touchez **Ajouter** en haut à droite. Losh est maintenant sur votre écran d’accueil.',
         ],
         note: 'Losh dans Safari et Losh sur l’écran d’accueil gardent des données séparées. Mieux vaut garder vos livres dans le Losh de l’écran d’accueil.',
@@ -296,7 +296,7 @@ const ru: HomeContent = {
         steps: [
           'Откройте loshreader.vercel.app в **Safari**.',
           'Нажмите кнопку **Поделиться** внизу (квадрат со стрелкой вверх).',
-          'Прокрутите список немного вниз и выберите **На экран «Домой»**.',
+          'Выберите **На экран «Домой»** (если не видно, прокрутите список немного вниз).',
           'Нажмите **Добавить** в правом верхнем углу. Теперь Losh на вашем экране «Домой».',
         ],
         note: 'Losh в Safari и Losh на экране «Домой» хранят данные отдельно. Книги лучше хранить в Losh на экране «Домой».',
