@@ -11,6 +11,8 @@ Hazırlık: terminalde `cd C:\Users\admin\Desktop\losh` ve `npm.cmd run dev` ça
 - [ ] Sağ üstteki 🌐 "Language" düğmesine tıklayınca dil listesi açılıyor; English seçince sayfa İngilizce oluyor, okuyucuya geçince de İngilizce kalıyor.
 - [ ] Bağış bölümünde "Bağış seçeneği yakında burada olacak." yazıyor.
 - [ ] Telefon genişliğinde (tarayıcıyı daraltınca) yatay kaydırma çıkmıyor, buton tam genişlik.
+- [ ] Hareket: açılışta başlık ve buton sırayla beliriyor; aşağı inerken kartlar ve bağış kutusu yumuşakça beliriyor; arka plan ışığı yavaşça dalgalanıyor.
+- [ ] Windows Ayarlar → Erişilebilirlik → Görsel efektler → "Animasyon efektleri" kapatılınca hiçbir şey hareket etmiyor, her şey anında görünüyor.
 
 ## Aşama 1 — Görüntüleyici
 

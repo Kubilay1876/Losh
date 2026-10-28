@@ -1,7 +1,11 @@
-import { useEffect } from 'preact/hooks';
+import { useEffect, useRef } from 'preact/hooks';
 import { PROJECT, SUPPORT, translate, type KeyValueStore, type MessageKey } from '@losh/core';
 import { Logo, useSettings } from '@losh/viewer/settings';
 import { LanguageMenu } from './LanguageMenu';
+import { useReveal } from './useReveal';
+
+/** Stagger delay for reveal animations. */
+const delay = (ms: number) => ({ '--d': `${ms}ms` }) as Record<string, string>;
 
 const READER_HREF = './app/';
 
@@ -20,6 +24,8 @@ const PREVIEWS = [
 export function Home({ store }: { store: KeyValueStore }) {
   const [settings, update, loaded] = useSettings(store);
   const t = (key: MessageKey, params?: Record<string, string | number>) => translate(settings.locale, key, params);
+  const rootRef = useRef<HTMLDivElement>(null);
+  useReveal(rootRef, loaded);
 
   useEffect(() => {
     document.documentElement.lang = settings.locale;
@@ -30,7 +36,7 @@ export function Home({ store }: { store: KeyValueStore }) {
   if (!loaded) return null;
 
   return (
-    <div class="home">
+    <div class="home" ref={rootRef}>
       <header class="home-top">
         <span class="home-brand">
           <Logo size={34} id="home-logo-small" />
@@ -41,23 +47,33 @@ export function Home({ store }: { store: KeyValueStore }) {
 
       <main>
         <section class="home-hero">
-          <Logo size={132} glow id="home-logo-hero" class="home-hero-logo" />
-          <p class="home-eyebrow">{t('home.hello')}</p>
-          <h1>{t('home.title')}</h1>
-          <p class="home-lead">{t('home.subtitle')}</p>
-          <a class="home-start" href={READER_HREF}>
+          <div data-reveal style={delay(0)}>
+            <Logo size={132} glow id="home-logo-hero" class="home-hero-logo" />
+          </div>
+          <p class="home-eyebrow" data-reveal style={delay(90)}>
+            {t('home.hello')}
+          </p>
+          <h1 data-reveal style={delay(170)}>
+            {t('home.title')}
+          </h1>
+          <p class="home-lead" data-reveal style={delay(250)}>
+            {t('home.subtitle')}
+          </p>
+          <a class="home-start" href={READER_HREF} data-reveal style={delay(340)}>
             {t('home.start')}
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>
           </a>
-          <p class="home-note">{t('open.privacy')}</p>
+          <p class="home-note" data-reveal style={delay(420)}>
+            {t('open.privacy')}
+          </p>
         </section>
 
         <section class="home-preview" aria-label={t('home.preview.label')}>
           <div class="home-pages">
-            {PREVIEWS.map((p) => (
-              <figure class="home-page" data-mode={p.mode} key={p.mode}>
+            {PREVIEWS.map((p, i) => (
+              <figure class="home-page" data-mode={p.mode} key={p.mode} data-reveal style={delay(i * 120)}>
                 <div class="home-sheet" aria-hidden="true">
                   <span class="home-line home-line-title" />
                   <span class="home-line" />
@@ -71,14 +87,14 @@ export function Home({ store }: { store: KeyValueStore }) {
               </figure>
             ))}
           </div>
-          <p class="home-preview-label">{t('home.preview.label')}</p>
+          <p class="home-preview-label" data-reveal style={delay(360)}>{t('home.preview.label')}</p>
         </section>
 
         <section class="home-features" aria-labelledby="home-features-title">
-          <h2 id="home-features-title">{t('home.featuresTitle')}</h2>
+          <h2 id="home-features-title" data-reveal>{t('home.featuresTitle')}</h2>
           <ul>
-            {FEATURES.map((f) => (
-              <li key={f.title}>
+            {FEATURES.map((f, i) => (
+              <li key={f.title} data-reveal style={delay(100 + i * 120)}>
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <path d={f.icon} />
                 </svg>
@@ -89,7 +105,7 @@ export function Home({ store }: { store: KeyValueStore }) {
           </ul>
         </section>
 
-        <section class="home-support" aria-labelledby="home-support-title">
+        <section class="home-support" aria-labelledby="home-support-title" data-reveal>
           <h2 id="home-support-title">{t('home.support.title')}</h2>
           <p>{t('home.support.text')}</p>
           {SUPPORT.enabled ? (
@@ -102,7 +118,7 @@ export function Home({ store }: { store: KeyValueStore }) {
         </section>
       </main>
 
-      <footer class="home-footer">
+      <footer class="home-footer" data-reveal>
         <p>
           {t('home.footer.maker', { name: PROJECT.maker })} ·{' '}
           <a href={PROJECT.githubUrl} target="_blank" rel="noopener noreferrer">

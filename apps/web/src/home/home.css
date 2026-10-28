@@ -456,3 +456,86 @@
     transition: filter 0.15s, background-color 0.15s, box-shadow 0.2s, transform 0.15s;
   }
 }
+
+/* ---------- Motion: slow and soft; nothing moves for people who prefer reduced motion ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* Scroll reveal (useReveal adds .reveal-ready to the root and .is-visible to each element). */
+  .reveal-ready [data-reveal] {
+    opacity: 0;
+    transform: translateY(26px);
+    transition:
+      opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms),
+      transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms);
+  }
+
+  .reveal-ready [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* The background light drifts very slowly. */
+  .home::before {
+    animation: home-aurora 26s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  @keyframes home-aurora {
+    0% { transform: translate3d(0, 0, 0) scale(1.06); }
+    50% { transform: translate3d(-2.5%, 1.5%, 0) scale(1.12); }
+    100% { transform: translate3d(2.5%, -1%, 0) scale(1.08); }
+  }
+
+  /* The big logo breathes. */
+  .home-hero-logo {
+    animation: home-breathe 6s ease-in-out infinite;
+  }
+
+  @keyframes home-breathe {
+    0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 0 transparent); }
+    50% { transform: translateY(-7px); filter: drop-shadow(0 10px 26px rgb(224 33 157 / 0.35)); }
+  }
+
+  /* The start button glows gently. */
+  .home-start {
+    animation: home-glow 4.5s ease-in-out infinite;
+  }
+
+  @keyframes home-glow {
+    0%, 100% { box-shadow: 0 10px 40px rgb(246 201 69 / 0.22); }
+    50% { box-shadow: 0 12px 52px rgb(246 201 69 / 0.42); }
+  }
+
+  /* Preview pages and feature cards lift a little under the pointer. */
+  .home-sheet,
+  .home-features li {
+    transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s;
+  }
+
+  .home-page:hover .home-sheet {
+    transform: translateY(-6px) rotate(-0.6deg);
+  }
+
+  .home-features li:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgb(0 0 0 / 0.35);
+  }
+
+  /* Light travels slowly along the donation card's gradient border. */
+  .home-support {
+    background-size: 100% 100%, 260% 260%;
+    animation: home-border 9s ease-in-out infinite alternate;
+  }
+
+  @keyframes home-border {
+    from { background-position: 0 0, 0% 50%; }
+    to { background-position: 0 0, 100% 50%; }
+  }
+}
+
+/* Printing never scrolls, so show everything. */
+@media print {
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

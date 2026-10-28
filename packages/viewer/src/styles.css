@@ -411,7 +411,21 @@ a.losh-brand:hover .losh-brand-text {
   display: grid;
   place-items: center;
   padding: 24px;
-  background: var(--grain), var(--aurora), var(--ui-bg);
+  background: var(--ui-bg);
+  overflow: hidden;
+}
+
+/* The glow lives on its own layer so it can drift without repainting the drop box. */
+.losh-empty::before {
+  content: '';
+  position: absolute;
+  inset: -6%;
+  background: var(--grain), var(--aurora);
+  pointer-events: none;
+}
+
+.losh-empty > * {
+  position: relative;
 }
 
 .losh-drop {
@@ -560,5 +574,68 @@ a.losh-brand:hover .losh-brand-text {
   }
   .losh-mode {
     padding: 0 9px;
+  }
+}
+
+/* ---------- Motion: only around the page, never on it; off for people who prefer reduced motion ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .losh-empty::before {
+    animation: losh-aurora 26s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  @keyframes losh-aurora {
+    0% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(-2%, 1.5%, 0) scale(1.05); }
+    100% { transform: translate3d(2%, -1%, 0) scale(1.03); }
+  }
+
+  .losh-drop {
+    animation: losh-rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .losh-panel {
+    transform-origin: top left;
+    animation: losh-pop 0.18s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .losh-search {
+    animation: losh-slide-down 0.18s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .losh-dialog[open] {
+    animation: losh-pop 0.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .losh-dialog[open]::backdrop {
+    animation: losh-fade 0.2s ease-out both;
+  }
+
+  .losh-toast span {
+    animation: losh-rise 0.3s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  .losh-dropzone {
+    animation: losh-fade 0.15s ease-out both;
+  }
+
+  @keyframes losh-rise {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes losh-pop {
+    from { opacity: 0; transform: translateY(-6px) scale(0.97); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes losh-slide-down {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes losh-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 }
