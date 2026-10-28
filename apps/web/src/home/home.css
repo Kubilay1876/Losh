@@ -448,12 +448,90 @@
   }
 }
 
+/* ---------- Hover motion on things you can click ----------
+   Uses `translate`/`scale`/`rotate` rather than `transform`, so it never fights the scroll reveal. */
 @media (prefers-reduced-motion: no-preference) {
   .home-start,
   .lang-button,
+  .lang-globe,
   .lang-caret,
+  .lang-name,
+  .home-start-arrow,
   .home-support-btn {
-    transition: filter 0.15s, background-color 0.15s, box-shadow 0.2s, transform 0.15s;
+    transition:
+      filter 0.15s,
+      background-color 0.15s,
+      border-color 0.2s,
+      box-shadow 0.2s,
+      transform 0.2s,
+      translate 0.3s cubic-bezier(0.2, 0.7, 0.2, 1),
+      scale 0.3s cubic-bezier(0.2, 0.7, 0.2, 1),
+      rotate 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  /* The reveal sets its own (delayed) transition on the start button; keep both. */
+  .reveal-ready .home-start[data-reveal] {
+    transition:
+      opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms),
+      transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms),
+      filter 0.15s,
+      translate 0.3s cubic-bezier(0.2, 0.7, 0.2, 1),
+      scale 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  /* Start: rises a little and the arrow points the way. */
+  .home-start:hover {
+    translate: 0 -3px;
+    scale: 1.03;
+  }
+
+  .home-start:active {
+    translate: 0 0;
+    scale: 0.98;
+  }
+
+  .home-start:hover .home-start-arrow {
+    translate: 5px 0;
+  }
+
+  /* Language: lifts, the border lights up and the globe turns. */
+  .lang-button:hover {
+    translate: 0 -1px;
+    border-color: var(--accent-line);
+    box-shadow: 0 6px 22px rgb(224 33 157 / 0.22);
+  }
+
+  .lang-button:active {
+    translate: 0 0;
+    scale: 0.97;
+  }
+
+  .lang-button:hover .lang-globe,
+  .lang-button[aria-expanded='true'] .lang-globe {
+    rotate: 25deg;
+  }
+
+  .lang-button:hover .lang-caret {
+    translate: 0 1px;
+  }
+
+  /* Language items: the flag and name slide in a touch. */
+  .lang-item:hover .lang-name,
+  .lang-item:focus-visible .lang-name {
+    translate: 4px 0;
+  }
+
+  .home-support-btn:hover {
+    translate: 0 -2px;
+  }
+
+  .lang-menu {
+    transform-origin: top right;
+    animation: home-menu 0.18s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  @keyframes home-menu {
+    from { opacity: 0; transform: translateY(-6px) scale(0.97); }
   }
 }
 
