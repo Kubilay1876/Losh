@@ -7,8 +7,8 @@ Hazırlık: terminalde `cd C:\Users\admin\Desktop\losh` ve `npm.cmd run dev` ça
 ## Karşılama sayfası
 - [ ] `http://localhost:5173` açılınca önce karşılama sayfası geliyor (Hoş geldin, Gözünü yormadan oku).
 - [ ] "Hadi başlayalım" okuyucuyu açıyor.
-- [ ] Okuyucuda sol üstteki "Loş" yazısı karşılamaya geri götürüyor.
-- [ ] Sağ üstteki "English" düğmesi dili değiştiriyor; okuyucuya geçince de İngilizce kalıyor.
+- [ ] Okuyucuda sol üstteki "Losh" yazısı karşılamaya geri götürüyor.
+- [ ] Sağ üstteki 🌐 "Language" düğmesine tıklayınca dil listesi açılıyor; English seçince sayfa İngilizce oluyor, okuyucuya geçince de İngilizce kalıyor.
 - [ ] Bağış bölümünde "Bağış seçeneği yakında burada olacak." yazıyor.
 - [ ] Telefon genişliğinde (tarayıcıyı daraltınca) yatay kaydırma çıkmıyor, buton tam genişlik.
 

@@ -13,7 +13,7 @@ export interface ReaderProps {
   store: KeyValueStore;
   /** URL (relative to the page) of the folder holding pdf.js cmaps/, standard_fonts/, wasm/, iccs/. */
   pdfAssetsBase: string;
-  /** When set, the "Loş" brand links back to this page (the welcome page). */
+  /** When set, the "Losh" brand links back to this page (the welcome page). */
   homeHref?: string;
 }
 
@@ -232,11 +232,11 @@ export function Reader({ store, pdfAssetsBase, homeHref }: ReaderProps) {
       <div class="losh-toolbar" role="toolbar" aria-label={t('app.tagline')}>
         {homeHref ? (
           <a class="losh-brand" href={homeHref} title={t('home.back')} aria-label={`${t('app.name')} — ${t('home.back')}`}>
-            Loş
+            Losh
           </a>
         ) : (
           <div class="losh-brand" aria-label={t('app.name')}>
-            Loş
+            Losh
           </div>
         )}
 

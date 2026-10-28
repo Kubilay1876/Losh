@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'preact/hooks';
-import { DEFAULT_SETTINGS, LOCALES, MODES, SETTINGS_LIMITS, type Locale, type MessageKey, type Settings } from '@losh/core';
+import { DEFAULT_SETTINGS, LOCALE_NAMES, LOCALES, MODES, SETTINGS_LIMITS, type Locale, type MessageKey, type Settings } from '@losh/core';
 import { IconClose } from './icons';
 
 interface Props {
@@ -8,8 +8,6 @@ interface Props {
   t(key: MessageKey): string;
   onClose(): void;
 }
-
-const LOCALE_NAMES: Record<Locale, string> = { tr: 'Türkçe', en: 'English' };
 
 export function SettingsPanel({ settings, update, t, onClose }: Props) {
   const ref = useRef<HTMLDivElement>(null);

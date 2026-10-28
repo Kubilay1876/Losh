@@ -1,7 +1,7 @@
 import type { Locale } from './settings';
 
 const tr = {
-  'app.name': 'Loş',
+  'app.name': 'Losh',
   'app.tagline': 'Göz dostu PDF okuyucu',
   'open.button': 'PDF aç',
   'open.drop': "PDF'i buraya sürükle",
@@ -61,9 +61,9 @@ const tr = {
   'home.back': 'Ana sayfaya dön',
   'home.hello': 'Hoş geldin',
   'home.title': 'Gözünü yormadan oku.',
-  'home.subtitle': 'Loş, PDF kitaplarını kağıt ya da gece tonunda gösteren ücretsiz bir okuyucu. Üyelik yok, kurulum yok.',
+  'home.subtitle': 'Losh, PDF kitaplarını kağıt ya da gece tonunda gösteren ücretsiz bir okuyucu. Üyelik yok, kurulum yok.',
   'home.start': 'Hadi başlayalım',
-  'home.featuresTitle': 'Neden Loş?',
+  'home.featuresTitle': 'Neden Losh?',
   'home.feature.modes.title': 'Göz dostu modlar',
   'home.feature.modes.text': 'Kağıt, gece ve koyu sepya tonları; sıcak ışık, parlaklık ve kontrast ayarı.',
   'home.feature.private.title': 'Dosyan sende kalır',
@@ -71,14 +71,14 @@ const tr = {
   'home.feature.free.title': 'Ücretsiz ve açık kaynak',
   'home.feature.free.text': "Reklam yok, takip yok. Kodun tamamı GitHub'da herkese açık.",
   'home.preview.label': 'Aynı sayfa, üç farklı tonda',
-  'home.support.title': "Loş'u beğendin mi?",
-  'home.support.text': 'Loş tamamen ücretsiz ve reklamsız. Geliştirmeye devam edebilmem için küçük bir destek çok işe yarar.',
+  'home.support.title': "Losh'u beğendin mi?",
+  'home.support.text': 'Losh tamamen ücretsiz ve reklamsız. Geliştirmeye devam edebilmem için küçük bir destek çok işe yarar.',
   'home.support.button': 'Destek ol',
   'home.support.soon': 'Bağış seçeneği yakında burada olacak.',
   'home.footer.maker': 'Yapımcı: {name}',
   'home.footer.source': 'Kaynak kodu',
-  'home.footer.medical': 'Loş bir okuma kolaylığı aracıdır, tıbbi bir ürün değildir. Göz ağrın sürerse bir göz doktoruna başvur.',
-  'home.switchLanguage': 'English',
+  'home.footer.medical': 'Losh bir okuma kolaylığı aracıdır, tıbbi bir ürün değildir. Göz ağrın sürerse bir göz doktoruna başvur.',
+  'home.languageMenu': 'Dil seç',
 };
 
 export type MessageKey = keyof typeof tr;
@@ -162,10 +162,13 @@ const en: Messages = {
   'home.footer.maker': 'Made by {name}',
   'home.footer.source': 'Source code',
   'home.footer.medical': 'Losh is a reading aid, not a medical product. If your eyes keep hurting, see an eye doctor.',
-  'home.switchLanguage': 'Türkçe',
+  'home.languageMenu': 'Choose language',
 };
 
 export const MESSAGES: Record<Locale, Messages> = { tr, en };
+
+/** Each language written in itself, for language pickers. */
+export const LOCALE_NAMES: Record<Locale, string> = { tr: 'Türkçe', en: 'English' };
 
 /** Looks up a message and fills `{name}` placeholders. */
 export function translate(locale: Locale, key: MessageKey, params?: Record<string, string | number>): string {

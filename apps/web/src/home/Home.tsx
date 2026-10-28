@@ -1,6 +1,7 @@
 import { useEffect } from 'preact/hooks';
 import { PROJECT, SUPPORT, translate, type KeyValueStore, type MessageKey } from '@losh/core';
 import { useSettings } from '@losh/viewer/settings';
+import { LanguageMenu } from './LanguageMenu';
 
 const READER_HREF = './app/';
 
@@ -31,10 +32,8 @@ export function Home({ store }: { store: KeyValueStore }) {
   return (
     <div class="home">
       <header class="home-top">
-        <span class="home-wordmark losh-gradient-text">Loş</span>
-        <button type="button" class="home-lang" onClick={() => update({ locale: settings.locale === 'tr' ? 'en' : 'tr' })}>
-          {t('home.switchLanguage')}
-        </button>
+        <span class="home-wordmark losh-gradient-text">Losh</span>
+        <LanguageMenu locale={settings.locale} label={t('home.languageMenu')} onChange={(locale) => update({ locale })} />
       </header>
 
       <main>

@@ -48,7 +48,7 @@ html {
   background: var(--bg);
 }
 
-/* Gradient text for the "Loş" wordmark. */
+/* Gradient text for the "Losh" wordmark. */
 .losh-gradient-text {
   background: var(--gradient-bright);
   -webkit-background-clip: text;

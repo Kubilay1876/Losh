@@ -1,4 +1,4 @@
-# Loş · Losh
+# Losh
 
 Göz dostu, ücretsiz ve açık kaynak PDF okuyucu. PDF'ler cihazından hiçbir yere gönderilmez; her şey tarayıcıda, internetsiz çalışır.
 
