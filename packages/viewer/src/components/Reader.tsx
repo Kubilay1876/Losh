@@ -585,18 +585,18 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
         />
       )}
 
-      {settingsOpen && (
-        <SettingsPanel
-          settings={settings}
-          update={update}
-          t={t}
-          onClose={() => setSettingsOpen(false)}
-          recentBytes={library ? recent.reduce((sum, r) => sum + r.size, 0) : undefined}
-          onClearRecent={() => void clearRecent()}
-        />
-      )}
-
       <main class="losh-stage" ref={stageRef}>
+        {/* Inside the page area, so it always opens below the toolbar and the search bar, never on top of them. */}
+        {settingsOpen && (
+          <SettingsPanel
+            settings={settings}
+            update={update}
+            t={t}
+            onClose={() => setSettingsOpen(false)}
+            recentBytes={library ? recent.reduce((sum, r) => sum + r.size, 0) : undefined}
+            onClearRecent={() => void clearRecent()}
+          />
+        )}
         <div class="losh-scroll" ref={scrollRef} tabIndex={0} role="region" aria-label={status.kind === 'ready' ? status.name : t('app.name')} onClick={onPageTap}>
           <div class="pdfViewer" />
         </div>

@@ -298,9 +298,11 @@ a.losh-brand:hover .losh-brand-text {
 /* ---------- Settings panel ---------- */
 .losh-panel {
   position: absolute;
-  top: 60px;
+  top: 8px;
   left: 12px;
   width: min(340px, calc(100% - 24px));
+  max-height: calc(100% - 16px);
+  overflow-y: auto;
   padding: 14px 16px 16px;
   background: var(--ui-surface);
   border: 1px solid var(--ui-border);
