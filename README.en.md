@@ -8,6 +8,23 @@
 
 **Try it now:** https://loshreader.vercel.app · [Türkçe](README.md)
 
+## Why Losh?
+
+**The problem:** reading PDF books for a long time tires and hurts the eyes. A bright white page and harsh screen light make it worse.
+
+**The goal:** to let everyone, especially students and book lovers, read their PDFs without straining their eyes, for free and safely.
+
+**The name:** *loş* is Turkish for dim, soft, restful light. Losh's pages and its interface are designed to feel exactly like that.
+
+> I made Losh first for myself, as someone whose eyes got tired reading PDF books, and then for everyone with the same problem. — Kubilay
+
+### Our promise
+
+- **Always free:** no paid version, subscription or ads. Only optional donations.
+- **Your file stays with you:** PDFs are never uploaded to any server; no tracking, cookies or analytics.
+- **Works offline:** read on the subway, on a plane, anywhere without internet.
+- **Open source:** all of the code is here, so anyone can check what we say.
+
 ## What it does
 
 - **Eye-friendly modes:** Normal, Paper, Night and Dark sepia, plus warm light, brightness and contrast. In night mode, photos keep their natural colours.

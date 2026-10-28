@@ -8,6 +8,23 @@
 
 **Hemen dene:** https://loshreader.vercel.app · [English](README.en.md)
 
+## Neden Losh?
+
+**Sorun:** Uzun süre PDF kitap okuyunca gözler yoruluyor ve ağrıyor. Bembeyaz sayfa ve sert ekran ışığı bunu daha da artırıyor.
+
+**Amaç:** Herkesin, özellikle öğrencilerin ve kitap okuyanların, PDF'lerini gözünü yormadan, ücretsiz ve güvenle okuyabilmesi.
+
+**İsim:** *Loş*: kısık, yumuşak, rahat ışık. Losh'un sayfaları da arayüzü de tam böyle hissettirmek için tasarlandı.
+
+> Losh'u, PDF kitap okurken gözleri yorulan biri olarak önce kendim için, sonra aynı sorunu yaşayan herkes için yaptım. — Kubilay
+
+### Sözümüz
+
+- **Hep ücretsiz:** Ücretli sürüm, abonelik ya da reklam yok. Sadece isteğe bağlı bağış.
+- **Dosyan sende kalır:** PDF'ler hiçbir sunucuya yüklenmez; takip, çerez ya da ölçüm aracı yok.
+- **İnternetsiz çalışır:** Metroda, uçakta, internetin olmadığı her yerde okuyabilirsin.
+- **Açık kaynak:** Kodun tamamı burada; söylediklerimizi herkes kontrol edebilir.
+
 ## Neler yapar
 
 - **Göz dostu modlar:** Normal, Kağıt, Gece ve Koyu sepya; sıcak ışık, parlaklık ve kontrast ayarı. Gece modunda fotoğraflar doğal renginde kalır.
