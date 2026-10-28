@@ -14,6 +14,8 @@
   color-scheme: dark;
   display: flex;
   flex-direction: column;
+  /* Padding (room for the phone's bottom bar) counts inside the screen height, not on top of it. */
+  box-sizing: border-box;
   height: 100%;
   min-height: 0;
   background: var(--ui-bg);
@@ -862,6 +864,37 @@ a.losh-brand:hover .losh-brand-text {
   }
 }
 
+/* ---------- Reading without the bars: a tap on the page hides them on touch screens ---------- */
+.losh[data-bars='hidden'] {
+  /* The strip under the iPhone clock takes the page background instead of the toolbar's. */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: 0;
+  background: var(--losh-viewer-bg);
+}
+
+/* Moved with `top`, not `transform`: a transform would also drag the fixed bottom bar inside it. */
+.losh[data-bars='hidden'] .losh-toolbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -160px;
+  visibility: hidden;
+}
+
+@media (max-width: 640px) {
+  .losh[data-bars='hidden'] .losh-dock {
+    transform: translateY(100%);
+  }
+
+  .losh[data-bars='hidden'] .losh-toast {
+    bottom: calc(14px + env(safe-area-inset-bottom));
+  }
+
+  .losh[data-bars='hidden'] .losh-keep {
+    bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+}
+
 /* ---------- Motion: only around the page, never on it; off for people who prefer reduced motion ---------- */
 @media (prefers-reduced-motion: no-preference) {
   .losh-empty::before {
@@ -913,6 +946,40 @@ a.losh-brand:hover .losh-brand-text {
     .losh-panel {
       animation: losh-sheet 0.25s cubic-bezier(0.2, 0.7, 0.2, 1) both;
     }
+  }
+
+  .losh[data-bars='hidden'] .losh-toolbar {
+    animation: losh-bar-away 0.22s ease-in both;
+  }
+
+  .losh[data-bars='back'] .losh-toolbar {
+    animation: losh-bar-back 0.25s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  }
+
+  @media (max-width: 640px) {
+    .losh[data-bars='hidden'] .losh-dock {
+      animation: losh-dock-away 0.22s ease-in both;
+    }
+
+    .losh[data-bars='back'] .losh-dock {
+      animation: losh-dock-back 0.25s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+  }
+
+  @keyframes losh-bar-away {
+    from { top: 0; visibility: visible; }
+  }
+
+  @keyframes losh-bar-back {
+    from { top: -160px; }
+  }
+
+  @keyframes losh-dock-away {
+    from { transform: none; }
+  }
+
+  @keyframes losh-dock-back {
+    from { transform: translateY(100%); }
   }
 
   @keyframes losh-sheet {

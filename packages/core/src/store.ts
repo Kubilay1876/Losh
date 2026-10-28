@@ -8,6 +8,8 @@ export interface KeyValueStore {
 export const STORAGE_KEYS = {
   settings: 'losh.settings',
   position: (docKey: string) => `losh.pos.${docKey}`,
+  /** Set once the "tap the page to hide the menus" tip has been shown. */
+  barsHint: 'losh.hint.bars',
 } as const;
 
 export function createMemoryStore(initial: Record<string, unknown> = {}): KeyValueStore {

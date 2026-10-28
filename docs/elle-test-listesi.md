@@ -74,6 +74,9 @@ Bunlar yayındaki sitede denenir: https://loshreader.vercel.app
 ### Telefon arayüzü
 - [ ] Modlar ve sayfa numarası **altta**, başparmakla ulaşılacak yerde.
 - [ ] Sayfaları iki parmakla açıp kapatınca (pinch) **sadece PDF** büyüyor, üst ve alt çubuklar aynı kalıyor; parmaklar durunca yazı netleşiyor.
+- [ ] PDF açıkken sayfaya **bir kez dokununca** üst ve alt çubuk kayarak kayboluyor, PDF bütün ekranı kaplıyor; yazı yerinden oynamıyor. Bir daha dokununca çubuklar geri geliyor.
+- [ ] İlk PDF'te bir kez "Menüleri gizlemek ya da geri getirmek için sayfaya bir kez dokun." ipucu çıkıyor, sonra bir daha çıkmıyor.
+- [ ] PDF'in son sayfasının en altı alt çubuğun arkasında kalmıyor.
 - [ ] Ayarlar alttan yukarı kayan bir panel olarak açılıyor.
 - [ ] Sayfa numarası kutusuna dokununca ekran kendi kendine büyümüyor.
 - [ ] Telefonu yan çevirince de düzen bozulmuyor.

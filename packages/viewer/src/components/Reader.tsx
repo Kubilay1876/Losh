@@ -31,9 +31,24 @@ const POSITION_SAVE_DELAY_MS = 500;
 const TOAST_MS = 3500;
 const ZOOM_PERCENTS = [50, 75, 100, 125, 150, 200, 300];
 const MODE_ICONS = { normal: IconSun, sepia: IconBook, night: IconMoon, darkSepia: IconCandle } as const;
+/** Phones and tablets: a tap on the page hides the bars, so the PDF gets the whole screen. */
+const TOUCH_UI_QUERY = '(max-width: 640px), (pointer: coarse)';
+const BARS_HINT_DELAY_MS = 1500;
 
 function isPdf(file: File): boolean {
   return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+}
+
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = useState(() => typeof matchMedia === 'function' && matchMedia(query).matches);
+  useEffect(() => {
+    const mq = matchMedia(query);
+    const onChange = () => setMatches(mq.matches);
+    onChange();
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, [query]);
+  return matches;
 }
 
 export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }: ReaderProps) {
@@ -65,6 +80,13 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
   const [recent, setRecent] = useState<RecentItem[]>([]);
   /** A just-opened PDF waiting for the "keep it on this device?" answer. */
   const [keepAsk, setKeepAsk] = useState<{ file: File; key: string } | null>(null);
+  const touchUi = useMediaQuery(TOUCH_UI_QUERY);
+  const stageRef = useRef<HTMLElement>(null);
+  /** Where the pages started on screen before the bars last moved. */
+  const stageTopRef = useRef<number | null>(null);
+  const [barsAway, setBarsAway] = useState(false);
+  const [barsEverAway, setBarsEverAway] = useState(false);
+  const [barsHintSeen, setBarsHintSeen] = useState(true);
 
   // --- pdf.js controller -------------------------------------------------
   // A layout effect, so the controller exists before the first paint: a file picked or shared
@@ -154,6 +176,7 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
       setStatus({ kind: 'loading' });
       setSearchOpen(false);
       setKeepAsk(null);
+      setBarsAway(false);
       controller.clearSearch();
       try {
         const bytes = new Uint8Array(await file.arrayBuffer());
@@ -311,6 +334,50 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
   } as Record<string, string>;
 
   const hasDoc = status.kind === 'ready';
+
+  // --- bars out of the way while reading (touch screens) ---------------------------
+  const barsHidden = barsAway && touchUi && hasDoc && !searchOpen && !settingsOpen;
+
+  // The pages area grows or shrinks when the bars go or come back; scroll by the same amount so the text stays still.
+  useLayoutEffect(() => {
+    const stage = stageRef.current;
+    const scroller = scrollRef.current;
+    if (!stage || !scroller) return;
+    const top = stage.getBoundingClientRect().top;
+    if (stageTopRef.current !== null && top !== stageTopRef.current) scroller.scrollTop += top - stageTopRef.current;
+    stageTopRef.current = top;
+  }, [barsHidden]);
+
+  useEffect(() => {
+    void store.get<boolean>(STORAGE_KEYS.barsHint).then((seen) => setBarsHintSeen(seen === true));
+  }, [store]);
+
+  const markBarsHintSeen = useCallback(() => {
+    setBarsHintSeen(true);
+    void store.set(STORAGE_KEYS.barsHint, true);
+  }, [store]);
+
+  // Tell touch users once, when nothing else is on screen, that a tap hides the menus.
+  useEffect(() => {
+    if (!touchUi || !hasDoc || barsHintSeen || keepAsk || toast) return;
+    const id = setTimeout(() => {
+      setToast(t('bars.hint'));
+      markBarsHintSeen();
+    }, BARS_HINT_DELAY_MS);
+    return () => clearTimeout(id);
+  }, [touchUi, hasDoc, barsHintSeen, keepAsk, toast, t, markBarsHintSeen]);
+
+  const onPageTap = (e: MouseEvent) => {
+    if (!touchUi || !hasDoc || searchOpen || settingsOpen) return;
+    // Links in the PDF keep working, and a tap that clears a text selection is not a toggle.
+    if ((e.target as Element).closest('a, button, input, select, textarea')) return;
+    if (window.getSelection()?.isCollapsed === false) return;
+    if (stageRef.current) stageTopRef.current = stageRef.current.getBoundingClientRect().top;
+    if (!barsHidden) setBarsEverAway(true);
+    setBarsAway(!barsHidden);
+    if (!barsHintSeen) markBarsHintSeen();
+  };
+
   const zoomSelectValue = typeof zoom.preset === 'string' ? zoom.preset : 'custom';
   const zoomPercent = Math.round(zoom.scale * 100);
 
@@ -318,6 +385,7 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
     <div
       class={`losh${filters.imageRestoreFilter ? ' losh-restore-images' : ''}`}
       data-mode={settings.mode}
+      data-bars={barsHidden ? 'hidden' : barsEverAway ? 'back' : undefined}
       style={styleVars}
       lang={settings.locale}
       {...dropHandlers}
@@ -478,8 +546,8 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
         />
       )}
 
-      <main class="losh-stage">
-        <div class="losh-scroll" ref={scrollRef} tabIndex={0} aria-label={status.kind === 'ready' ? status.name : t('app.name')}>
+      <main class="losh-stage" ref={stageRef}>
+        <div class="losh-scroll" ref={scrollRef} tabIndex={0} aria-label={status.kind === 'ready' ? status.name : t('app.name')} onClick={onPageTap}>
           <div class="pdfViewer" />
         </div>
         <div class="losh-warm" aria-hidden="true" />
