@@ -23,7 +23,7 @@ export interface RecentLibrary {
 }
 
 /** How many PDFs are kept at most; the oldest is removed when a new one comes in. */
-export const RECENT_LIMIT = 12;
+export const RECENT_LIMIT = 30;
 
 const DB_NAME = 'losh';
 const DB_VERSION = 1;

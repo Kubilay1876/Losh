@@ -123,3 +123,9 @@ Bunlar yayındaki sitede denenir: https://loshreader.vercel.app
 
 ### Bilgisayar
 - [ ] Fareyle yazının üstünden sürükleyince aynı şekilde satıra oturuyor; **H** kalemi açıp kapatıyor, **Ctrl+Z** geri alıyor, **Esc** kalemi kapatıyor.
+
+## Son okunanlar: devam kartı ve arama
+- [ ] Birkaç kitap saklayıp okuyucuya dönünce en son okuduğun kitap en üstte **Kaldığın yerden devam et** kartında: adı, "Sayfa 120 / 500 · %24" ve ilerleme çubuğu.
+- [ ] Karta dokununca kitap kaldığın sayfada açılıyor.
+- [ ] 7 ya da daha fazla kitap varken **Kitap ara** kutusu çıkıyor; "isik" yazınca "Işık…" bulunuyor (Türkçe harfler ve büyük/küçük harf fark etmiyor), bulunamayınca söylüyor.
+- [ ] Ayarlardaki not "En son açtığın 30 PDF saklanır" diyor.

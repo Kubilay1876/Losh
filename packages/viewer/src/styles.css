@@ -720,6 +720,109 @@ a.losh-brand:hover .losh-brand-text {
   font-size: 13px;
 }
 
+/* The latest book: a big "continue reading" card with how far you got. */
+.losh-continue {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  margin-bottom: 8px;
+  padding: 4px;
+  border: 1px solid var(--accent-line);
+  border-radius: 14px;
+  background: linear-gradient(120deg, rgb(246 201 69 / 0.1), rgb(224 33 157 / 0.06) 70%, transparent), var(--ui-surface);
+}
+
+.losh-continue-open {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 4px;
+  padding: 10px 10px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.losh-continue-open:hover {
+  background: var(--ui-hover);
+}
+
+.losh-continue-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.losh-continue-name {
+  overflow: hidden;
+  font-size: 17px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.losh-progress {
+  display: block;
+  height: 6px;
+  margin-top: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.08);
+}
+
+.losh-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--gradient);
+}
+
+.losh-recent-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 4px 6px;
+  padding: 0 10px;
+  border: 1px solid var(--ui-border);
+  border-radius: 10px;
+  background: var(--ui-bg);
+  color: var(--ui-muted);
+}
+
+/* The ring goes around the whole box, not just the bare input inside it. */
+.losh-recent-search:focus-within {
+  outline: 2px solid var(--ui-accent);
+  outline-offset: 1px;
+}
+
+.losh-recent-search svg {
+  flex: none;
+}
+
+.losh .losh-recent-search input {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--ui-text);
+}
+
+.losh-recent-empty {
+  margin: 10px 8px;
+  color: var(--ui-muted);
+  font-size: 14px;
+}
+
 .losh-recent-foot {
   display: flex;
   flex-wrap: wrap;
@@ -1040,6 +1143,7 @@ a.losh-brand:hover .losh-brand-text {
   /* 16px stops iPhone Safari from zooming into a field when it gets focus. */
   .losh-page-input,
   .losh-search input,
+  .losh .losh-recent-search input,
   .losh select {
     font-size: 16px;
   }

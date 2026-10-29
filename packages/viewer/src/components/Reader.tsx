@@ -128,7 +128,7 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
         const key = docKeyRef.current;
         if (!key) return;
         clearTimeout(saveTimer.current);
-        saveTimer.current = setTimeout(() => void store.set(STORAGE_KEYS.position(key), { page: current, savedAt: Date.now() }), POSITION_SAVE_DELAY_MS);
+        saveTimer.current = setTimeout(() => void store.set(STORAGE_KEYS.position(key), { page: current, total, savedAt: Date.now() }), POSITION_SAVE_DELAY_MS);
       },
       onZoomChange(scale, preset) {
         setZoom({ scale, preset });
@@ -195,7 +195,10 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
     try {
       const entries = await library.list();
       const items = await Promise.all(
-        entries.map(async (e) => ({ ...e, page: (await store.get<{ page?: number }>(STORAGE_KEYS.position(e.key)))?.page })),
+        entries.map(async (e) => {
+          const pos = await store.get<{ page?: number; total?: number }>(STORAGE_KEYS.position(e.key));
+          return { ...e, page: pos?.page, total: pos?.total };
+        }),
       );
       setRecent(items);
     } catch (err) {
