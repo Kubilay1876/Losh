@@ -844,6 +844,26 @@ a.losh-brand:hover .losh-brand-text {
   cursor: pointer;
 }
 
+/* Keeping is off: a quiet note with the way to turn it back on. */
+.losh-keep-off {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 14px;
+  padding: 12px 14px;
+  border: 1px dashed var(--ui-border);
+  border-radius: 14px;
+  background: rgb(15 10 26 / 0.55);
+  color: var(--ui-muted);
+  font-size: 14px;
+}
+
+.losh-keep-off p {
+  flex: 1 1 220px;
+  margin: 0;
+}
+
 /* "Keep this PDF on the device?" card */
 .losh-keep {
   position: absolute;

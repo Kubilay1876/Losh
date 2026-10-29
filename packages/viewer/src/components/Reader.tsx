@@ -763,6 +763,22 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
                     onClear={() => void clearRecent()}
                   />
                 )}
+                {/* A "no" once turns keeping off for good; say so where the list would be, with the way back. */}
+                {library && settings.keepRecent === 'never' && (
+                  <div class="losh-keep-off">
+                    <p>{t('keep.off')}</p>
+                    <button
+                      type="button"
+                      class="losh-text-btn"
+                      onClick={() => {
+                        update({ keepRecent: 'always' });
+                        setToast(t('keep.turnedOn'));
+                      }}
+                    >
+                      {t('keep.turnOn')}
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>

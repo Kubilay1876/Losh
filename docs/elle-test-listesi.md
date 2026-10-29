@@ -134,3 +134,4 @@ Bunlar yayındaki sitede denenir: https://loshreader.vercel.app
 - [ ] Kapağı tek büyük fotoğraf olan bir kitapta (ör. yemek kitabı) gece modunda kapak **doğal renkte**, negatif gibi değil.
 - [ ] Siyah-beyaz fotoğraflar da doğal kalıyor; gri çizim ve tablolar yazıyla birlikte koyulaşıyor.
 - [ ] Taranmış (fotoğrafı çekilmiş) kitap sayfaları gece modunda yine koyu zemin, açık yazı.
+- [ ] Saklama sorusuna bir kez **Hayır** deyince başlangıç ekranında "PDF'ler bu cihazda saklanmıyor" notu ve **Saklamayı aç** düğmesi çıkıyor; basınca sonraki PDF'ler listeye giriyor.
