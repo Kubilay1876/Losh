@@ -237,3 +237,46 @@ export function inkLines(lum: ArrayLike<number>, w: number, h: number): Line[] {
   }
   return lines;
 }
+
+/** Pieces narrower than this (fraction of the page width) are dropped after erasing. */
+const MIN_PIECE = 0.006;
+
+/**
+ * Cuts the eraser's boxes out of a mark's boxes, like rubbing out part of a highlighter line.
+ * Both snap to the same lines, so a cut is sideways only: a box that shares most of its height
+ * with an eraser box loses that stretch, and may split in two.
+ */
+export function cutRects(rects: MarkRect[], erase: MarkRect[]): MarkRect[] {
+  let pieces = rects;
+  for (const [el, et, ew, eh] of erase) {
+    const next: MarkRect[] = [];
+    for (const r of pieces) {
+      const [l, t, w, h] = r;
+      const overlap = Math.min(t + h, et + eh) - Math.max(t, et);
+      if (overlap < Math.min(h, eh) * 0.5 || el >= l + w || el + ew <= l) {
+        next.push(r);
+        continue;
+      }
+      if (el - l >= MIN_PIECE) next.push([l, t, el - l, h]);
+      if (l + w - (el + ew) >= MIN_PIECE) next.push([el + ew, t, l + w - (el + ew), h]);
+    }
+    pieces = next;
+  }
+  return pieces;
+}
+
+/** The marks after erasing on one page; the same array when nothing was touched. */
+export function eraseMarks(marks: Mark[], page: number, erase: MarkRect[]): Mark[] {
+  let changed = false;
+  const out: Mark[] = [];
+  for (const m of marks) {
+    const rects = m.page === page ? cutRects(m.rects, erase) : m.rects;
+    if (rects === m.rects || (rects.length === m.rects.length && rects.every((r, i) => r === m.rects[i]))) {
+      out.push(m);
+      continue;
+    }
+    changed = true;
+    if (rects.length) out.push({ ...m, rects });
+  }
+  return changed ? out : marks;
+}

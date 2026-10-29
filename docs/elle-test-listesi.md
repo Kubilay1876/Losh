@@ -113,7 +113,8 @@ Bunlar yayındaki sitede denenir: https://loshreader.vercel.app
 - [ ] Kalem açıkken tek parmak sayfayı kaydırmıyor; **iki parmakla** kaydırma ve yakınlaştırma çalışıyor.
 - [ ] Kalem açıkken uzun basınca iPhone'un kopyala/seç menüsü çıkmıyor.
 - [ ] Başka renk seçince sonraki işaret o renkte; kalem düğmesindeki küçük nokta da o renge dönüyor.
-- [ ] **Geri al** son işareti kaldırıyor; **Silgi** seçiliyken bir işarete dokununca o işaret siliniyor.
+- [ ] **Geri al** son adımı geri alıyor (çizdiğini de, sildiğini de).
+- [ ] **Silgi** kalem gibi çalışıyor: üstünden geçtiğin kelimeler ya da satırlar siliniyor, işaretin geri kalanı duruyor. Bir kelimeye tek dokunuş sadece o kelimeyi siliyor.
 - [ ] Gece ve koyu sepya modunda işaretler koyu renkli şerit olarak görünüyor, üstündeki yazı rahat okunuyor.
 - [ ] Yakınlaştırınca, "Yazıya sığdır"ı açınca işaretler yerinde kalıyor.
 - [ ] Losh'u kapatıp aynı PDF'i yeniden açınca işaretler duruyor.

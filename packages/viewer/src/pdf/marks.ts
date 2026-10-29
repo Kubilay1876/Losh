@@ -1,4 +1,4 @@
-import { groupLines, inkLines, padBoxes, snapToText, type Box, type Line, type Mark, type MarkColor, type MarkRect } from '@losh/core';
+import { groupLines, inkLines, padBoxes, snapToText, type Box, type Line, type Mark, type MarkRect } from '@losh/core';
 
 /** Scans are read at this width (pixels) to find their lines: sharp enough for small print, quick on phones. */
 const INK_WIDTH = 700;
@@ -60,12 +60,13 @@ function inkPageLines(div: HTMLElement, frame: Frame): Line[] {
 /**
  * Snaps strokes on one page to its lines of text. Looks at the page once (when the stroke starts)
  * and then answers quickly for every finger move, so the mark can follow live.
+ * With `tap`, a touch without movement counts too and means the word under it (the eraser's dab).
  */
-export function createSnapper(div: HTMLElement): (points: [number, number][]) => MarkRect[] | null {
+export function createSnapper(div: HTMLElement): (points: [number, number][], tap?: boolean) => MarkRect[] | null {
   const frame = pageFrame(div);
   let text: Line[] | null = null;
   let ink: Line[] | null = null;
-  return (points) => {
+  return (points, tap = false) => {
     if (points.length < 2) return null;
     const local = points.map(([x, y]): [number, number] => [x - frame.left, y - frame.top]);
     const xs = local.map((p) => p[0]);
@@ -73,7 +74,8 @@ export function createSnapper(div: HTMLElement): (points: [number, number][]) =>
     const minX = Math.min(...xs);
     const maxX = Math.max(...xs);
     const height = Math.max(...ys) - Math.min(...ys);
-    if (maxX - minX < MIN_STROKE_PX && height < MIN_STROKE_PX) return null;
+    const still = maxX - minX < MIN_STROKE_PX && height < MIN_STROKE_PX;
+    if (still && !tap) return null;
     const start = local[0];
     const end = local[local.length - 1];
     text ??= groupLines(textWords(div, frame));
@@ -82,6 +84,7 @@ export function createSnapper(div: HTMLElement): (points: [number, number][]) =>
       ink ??= inkPageLines(div, frame);
       boxes = snapToText(ink, start, end, height);
     }
+    if (!boxes && still) return null;
     if (!boxes) {
       // Nothing to snap to (a picture, the margin): a straight band along the stroke.
       const mid = [...ys].sort((a, b) => a - b)[Math.floor(ys.length / 2)];
@@ -102,25 +105,6 @@ function toRect(b: Box, frame: Frame): MarkRect {
   return [round(x0), round(y0), round(x1 - x0), round(y1 - y0)];
 }
 
-/** The mark under a point (client coordinates) on a page, if any. */
-export function markAt(div: HTMLElement, marks: Mark[], x: number, y: number): Mark | null {
-  const f = pageFrame(div);
-  const px = (x - f.left) / f.width;
-  const py = (y - f.top) / f.height;
-  const slack = 4 / f.width;
-  for (let i = marks.length - 1; i >= 0; i--) {
-    const m = marks[i];
-    if (m.rects.some(([l, t, w, h]) => px >= l - slack && px <= l + w + slack && py >= t - slack && py <= t + h + slack)) return m;
-  }
-  return null;
-}
-
-export interface MarkDraft {
-  page: number;
-  color: MarkColor;
-  rects: MarkRect[];
-}
-
 /**
  * Draws marks onto pages. Each page gets one layer inside its picture (the canvas wrapper), so the
  * reading mode's filter colours marks just like the paper: in night mode a yellow mark turns into
@@ -128,41 +112,32 @@ export interface MarkDraft {
  */
 export class MarkPainter {
   private byPage = new Map<number, Mark[]>();
-  private draft: MarkDraft | null = null;
 
   constructor(private readonly viewer: HTMLElement) {}
 
+  /** Shows these marks. Only pages whose marks changed are redrawn, so it can follow a finger. */
   set(marks: Mark[]): void {
-    const pages = new Set([...this.byPage.keys(), ...marks.map((m) => m.page)]);
+    const old = this.byPage;
     this.byPage = new Map();
     for (const m of marks) this.byPage.set(m.page, [...(this.byPage.get(m.page) ?? []), m]);
-    for (const p of pages) this.paintPage(p);
+    for (const page of new Set([...old.keys(), ...this.byPage.keys()])) {
+      const a = old.get(page) ?? [];
+      const b = this.byPage.get(page) ?? [];
+      if (a.length !== b.length || a.some((m, i) => m !== b[i])) this.paintPage(page);
+    }
   }
 
-  /** The mark being drawn right now, shown live under the finger. */
-  setDraft(draft: MarkDraft | null): void {
-    const pages = new Set([this.draft?.page, draft?.page]);
-    this.draft = draft;
-    for (const p of pages) if (p) this.paintPage(p);
-  }
-
-  /** Paints every page that has marks (after pdf.js redrew pages). */
-  paintAll(): void {
-    for (const p of this.byPage.keys()) this.paintPage(p);
-  }
-
-  paintPage(page: number): void {
+  private paintPage(page: number): void {
     const div = this.viewer.querySelector<HTMLElement>(`.page[data-page-number="${page}"]`);
     if (div) this.paint(div);
   }
 
+  /** Draws one page's marks (again); called whenever pdf.js has drawn the page. */
   paint(div: HTMLElement): void {
-    const page = Number(div.dataset.pageNumber);
-    const marks = this.byPage.get(page) ?? [];
-    const draft = this.draft?.page === page ? this.draft : null;
+    const marks = this.byPage.get(Number(div.dataset.pageNumber)) ?? [];
     const wrapper = div.querySelector<HTMLElement>('.canvasWrapper');
     let layer = div.querySelector<HTMLElement>('.losh-marks');
-    if (!marks.length && !draft) {
+    if (!marks.length) {
       layer?.remove();
       return;
     }
@@ -175,11 +150,11 @@ export class MarkPainter {
     }
     // Last in the wrapper: above the page canvases, which pdf.js always puts first.
     if (layer !== wrapper.lastElementChild) wrapper.append(layer);
-    layer.replaceChildren(...[...marks, ...(draft ? [draft] : [])].map(markElement));
+    layer.replaceChildren(...marks.map(markElement));
   }
 }
 
-function markElement(m: MarkDraft): HTMLElement {
+function markElement(m: Mark): HTMLElement {
   const el = document.createElement('div');
   el.className = 'losh-mark';
   el.dataset.color = m.color;

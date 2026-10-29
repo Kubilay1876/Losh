@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks';
-import { BREAK_SNOOZE_MINUTES, computeFilters, MODE_IDS, sanitizeMarks, STORAGE_KEYS, translate, type KeyValueStore, type Mark, type MarkRect, type MessageKey } from '@losh/core';
+import { BREAK_SNOOZE_MINUTES, computeFilters, eraseMarks, MODE_IDS, sanitizeMarks, STORAGE_KEYS, translate, type KeyValueStore, type Mark, type MarkRect, type MessageKey } from '@losh/core';
 import { ReaderController, type SearchState, type ZoomValue } from '../pdf/controller';
 import { documentKey } from '../pdf/docKey';
 import { enableAxisLock } from '../pdf/axisLock';
 import { enablePinchZoom } from '../pdf/pinch';
-import { createSnapper, markAt, MarkPainter } from '../pdf/marks';
+import { createSnapper, MarkPainter } from '../pdf/marks';
 import { enablePen, type PenTool } from '../pdf/pen';
 import type { RecentLibrary } from '../library';
 import { useSettings } from '../useSettings';
@@ -44,9 +44,6 @@ const BARS_HINT_DELAY_MS = 1500;
 const BREAK_ASK_AFTER_MS = 45_000;
 /** Undo remembers this many highlighter steps. */
 const UNDO_LIMIT = 100;
-
-/** One highlighter step, as undo sees it. */
-type MarkStep = { added: Mark } | { removed: Mark };
 
 const newMarkId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
@@ -111,7 +108,8 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
   markColorRef.current = settings.markColor;
   const painterRef = useRef<MarkPainter | null>(null);
   const marksRef = useRef<Mark[]>([]);
-  const undoRef = useRef<MarkStep[]>([]);
+  /** The marks as they were before each step, newest last. */
+  const undoRef = useRef<Mark[][]>([]);
   const [canUndo, setCanUndo] = useState(false);
   const [marksHintSeen, setMarksHintSeen] = useState(true);
 
@@ -146,30 +144,34 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
     const stopAxisLock = enableAxisLock(scrollRef.current!, () => penToolRef.current !== null);
     // The page under a stroke is read once per stroke, then every finger move snaps quickly.
     let snap: { div: HTMLElement; at: ReturnType<typeof createSnapper> } | null = null;
-    const snapped = (div: HTMLElement, points: [number, number][]): MarkRect[] | null => {
+    const snapped = (div: HTMLElement, points: [number, number][], tool: PenTool): MarkRect[] | null => {
       if (snap?.div !== div) snap = { div, at: createSnapper(div) };
-      return snap.at(points);
+      // A dab of the eraser rubs out the word under it; a dab of the pen marks nothing.
+      return snap.at(points, tool === 'eraser');
+    };
+    /** The marks with this stroke applied: a new mark, or the eraser's stretch cut out of the old ones. */
+    const withStroke = (div: HTMLElement, points: [number, number][], tool: PenTool): Mark[] => {
+      const rects = snapped(div, points, tool);
+      const page = Number(div.dataset.pageNumber);
+      if (!rects) return marksRef.current;
+      if (tool === 'eraser') return eraseMarks(marksRef.current, page, rects);
+      return [...marksRef.current, { id: newMarkId(), page, color: markColorRef.current, rects }];
     };
     const stopPen = enablePen(scrollRef.current!, {
       tool: () => penToolRef.current,
-      draw(div, points) {
-        const rects = snapped(div, points);
-        painter.setDraft(rects && { page: Number(div.dataset.pageNumber), color: markColorRef.current, rects });
+      draw(div, points, tool) {
+        // Shown live under the finger, kept only when it lifts.
+        painter.set(withStroke(div, points, tool));
       },
-      commit(div, points) {
-        const rects = snapped(div, points);
+      commit(div, points, tool) {
+        const marks = withStroke(div, points, tool);
         snap = null;
-        painter.setDraft(null);
-        if (rects) changeMarksRef.current({ added: { id: newMarkId(), page: Number(div.dataset.pageNumber), color: markColorRef.current, rects } });
+        if (marks !== marksRef.current) changeMarksRef.current(marks);
+        else painter.set(marks);
       },
       cancel() {
         snap = null;
-        painter.setDraft(null);
-      },
-      erase(div, x, y) {
-        const page = Number(div.dataset.pageNumber);
-        const hit = markAt(div, marksRef.current.filter((m) => m.page === page), x, y);
-        if (hit) changeMarksRef.current({ removed: hit });
+        painter.set(marksRef.current);
       },
     });
     return () => {
@@ -306,15 +308,14 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
   const pickFile = () => fileInput.current?.click();
 
   // --- highlighter -------------------------------------------------------------
-  /** Applies one step (or undoes one), redraws, and saves this PDF's marks on the device. */
+  /** Replaces this PDF's marks (remembering the old ones for undo), redraws and saves them on the device. */
   const changeMarks = useCallback(
-    (step: MarkStep, undoing = false) => {
-      const marks = 'added' in step ? [...marksRef.current, step.added] : marksRef.current.filter((m) => m.id !== step.removed.id);
+    (marks: Mark[], undoing = false) => {
+      if (!undoing) undoRef.current = [...undoRef.current, marksRef.current].slice(-UNDO_LIMIT);
       marksRef.current = marks;
       painterRef.current?.set(marks);
       const key = docKeyRef.current;
       if (key) void (marks.length ? store.set(STORAGE_KEYS.marks(key), marks) : store.remove(STORAGE_KEYS.marks(key)));
-      if (!undoing) undoRef.current = [...undoRef.current, step].slice(-UNDO_LIMIT);
       setCanUndo(undoRef.current.length > 0);
     },
     [store],
@@ -323,8 +324,8 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
   changeMarksRef.current = changeMarks;
 
   const undoMark = useCallback(() => {
-    const step = undoRef.current.pop();
-    if (step) changeMarks('added' in step ? { removed: step.added } : { added: step.removed }, true);
+    const before = undoRef.current.pop();
+    if (before) changeMarks(before, true);
   }, [changeMarks]);
 
   useEffect(() => {

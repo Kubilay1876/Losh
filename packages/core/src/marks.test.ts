@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { groupLines, inkLines, padBoxes, sanitizeMarks, snapToText, type Box } from './marks';
+import { cutRects, eraseMarks, groupLines, inkLines, padBoxes, sanitizeMarks, snapToText, type Box, type Mark, type MarkRect } from './marks';
 
 /** Words of a page in reading order: `rows` lines of `perLine` words, 10 px high, every 20 px. */
 function page(rows: number, perLine: number, left = 0): Box[] {
@@ -105,5 +105,31 @@ describe('sanitizeMarks', () => {
     const good = { id: 'a', page: 2, color: 'pink', rects: [[0.1, 0.2, 0.3, 0.02]] };
     expect(sanitizeMarks([good, { ...good, color: 'red' }, { ...good, page: 0 }, { ...good, rects: [[1, 2]] }, null])).toEqual([good]);
     expect(sanitizeMarks('nope')).toEqual([]);
+  });
+});
+
+describe('erasing', () => {
+  const line = (t: number): MarkRect => [0.1, t, 0.6, 0.02];
+
+  it('cuts only the stretch the eraser went over, splitting a band in two', () => {
+    expect(cutRects([line(0.5)], [[0.3, 0.5, 0.1, 0.02]])).toEqual([[0.1, 0.5, 0.2, 0.02], [0.4, 0.5, 0.3, 0.02]].map((r) => r.map((n) => expect.closeTo(n, 9))));
+  });
+
+  it('leaves other lines of the same mark alone', () => {
+    const mark: Mark = { id: 'a', page: 1, color: 'yellow', rects: [line(0.5), line(0.52), line(0.54)] };
+    const after = eraseMarks([mark], 1, [[0, 0.52, 1, 0.02]]);
+    expect(after[0].rects).toEqual([line(0.5), line(0.54)]);
+  });
+
+  it('does not touch a line it only grazes, or other pages', () => {
+    const mark: Mark = { id: 'a', page: 1, color: 'yellow', rects: [line(0.5)] };
+    const marks = [mark];
+    expect(eraseMarks(marks, 1, [[0, 0.515, 1, 0.02]])).toBe(marks);
+    expect(eraseMarks(marks, 2, [[0, 0.5, 1, 0.02]])).toBe(marks);
+  });
+
+  it('removes a mark once nothing of it is left, and drops slivers', () => {
+    const mark: Mark = { id: 'a', page: 1, color: 'yellow', rects: [line(0.5)] };
+    expect(eraseMarks([mark], 1, [[0.098, 0.5, 0.605, 0.02]])).toEqual([]);
   });
 });
