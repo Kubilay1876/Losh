@@ -135,3 +135,11 @@ Bunlar yayındaki sitede denenir: https://loshreader.vercel.app
 - [ ] Siyah-beyaz fotoğraflar da doğal kalıyor; gri çizim ve tablolar yazıyla birlikte koyulaşıyor.
 - [ ] Taranmış (fotoğrafı çekilmiş) kitap sayfaları gece modunda yine koyu zemin, açık yazı.
 - [ ] Saklama sorusuna bir kez **Hayır** deyince başlangıç ekranında "PDF'ler bu cihazda saklanmıyor" notu ve **Saklamayı aç** düğmesi çıkıyor; basınca sonraki PDF'ler listeye giriyor.
+
+## Site sağlamlaştırma (güvenlik başlıkları, hazır HTML, 404)
+- [ ] Altbilgideki **GitHub** ve SSS'deki "GitHub'da" bağlantısı doğrudan Losh reposunu açıyor (profili değil).
+- [ ] Bir PDF açınca, arayınca, işaretleyince ve uçak modunda "Son okunanlar"dan kitap açınca her şey eskisi gibi çalışıyor (yeni güvenlik kuralları hiçbir şeyi engellemiyor).
+- [ ] Bilgisayarda sayfaya sağ tıklayıp **Sayfa kaynağını görüntüle** deyince başlık, özellikler ve SSS metni ham HTML'de görünüyor (sadece `/`, `/privacy/` ve 404; okuyucu değil).
+- [ ] Dili İngilizce olan bir tarayıcıda açılış sayfası Türkçe yanıp sönmeden doğrudan İngilizce açılıyor.
+- [ ] `loshreader.vercel.app/olmayan-sayfa` gibi yanlış bir adres Losh görünümlü "Bu sayfa bulunamadı" sayfasını açıyor; **Okuyucuyu aç** ve **Ana sayfaya dön** çalışıyor.
+- [ ] Android'de PDF → **Paylaş → Losh** dosyayı okuyucuda açıyor. Dosya bir sebeple gelmezse hata sayfası değil, "Paylaştığın dosya Losh'a ulaşmadı" notuyla okuyucu açılıyor.

@@ -5,7 +5,8 @@ export const PROJECT = {
   /** Shown in the footer (surname initial only). */
   maker: 'Kubilay Ç.',
   githubUser: 'Kubilay1876',
-  githubUrl: 'https://github.com/Kubilay1876',
+  /** The Losh source code; every "GitHub" link on the site points here. */
+  repoUrl: 'https://github.com/Kubilay1876/Losh',
 } as const;
 
 /**

@@ -58,17 +58,31 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(page(req));
     return;
   }
-  event.respondWith(caches.match(req, { ignoreSearch: true }).then((hit) => hit || fetch(req)));
+  event.respondWith(
+    caches.match(req, { ignoreSearch: true }).then(async (hit) => {
+      if (hit) return hit;
+      const res = await fetch(req);
+      // pdf.js files left out of the first download (see onFirstUse in vite.config.ts): keep them once used.
+      if (res.ok && url.href.startsWith(inScope('./pdfjs/'))) {
+        const copy = res.clone();
+        event.waitUntil(caches.open(PDFJS_CACHE).then((cache) => cache.put(url.href, copy)));
+      }
+      return res;
+    }),
+  );
 });
 
-/** Pages: fresh from the network when it answers quickly (so updates show up), otherwise from the device. */
+/**
+ * Pages: fresh from the network when it answers quickly (so updates show up), otherwise from the device.
+ * A wrong address gets the server's "not found" page while online.
+ */
 async function page(req) {
   try {
     const res = await Promise.race([
       fetch(req),
       new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), PAGE_TIMEOUT_MS)),
     ]);
-    if (res.ok) return res;
+    if (res.ok || res.status === 404) return res;
   } catch {
     // offline or slow: fall through to the copy on the device
   }

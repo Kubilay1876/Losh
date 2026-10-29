@@ -1,5 +1,5 @@
 import { useEffect } from 'preact/hooks';
-import { translate, type KeyValueStore, type MessageKey } from '@losh/core';
+import { translate, type KeyValueStore, type MessageKey, type Settings } from '@losh/core';
 import { Logo, useSettings } from '@losh/viewer/settings';
 import { LanguageMenu } from '../home/LanguageMenu';
 import { Footer } from '../home/Footer';
@@ -8,8 +8,8 @@ import { PRIVACY_CONTENT, PRIVACY_UPDATED } from './content';
 
 const HOME_HREF = '../';
 
-export function Privacy({ store }: { store: KeyValueStore }) {
-  const [settings, update, loaded] = useSettings(store);
+export function Privacy({ store, initial }: { store: KeyValueStore; initial?: Settings }) {
+  const [settings, update, loaded] = useSettings(store, initial);
   const t = (key: MessageKey, params?: Record<string, string | number>) => translate(settings.locale, key, params);
   const content = PRIVACY_CONTENT[settings.locale];
 

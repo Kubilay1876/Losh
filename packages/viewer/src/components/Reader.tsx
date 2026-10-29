@@ -27,8 +27,11 @@ export interface ReaderProps {
   homeHref?: string;
   /** On-device storage for "Recently read". Without it the reader keeps nothing. */
   library?: RecentLibrary;
-  /** Called once with a function that opens a file; for files arriving from outside (share sheet, "Open with"). */
-  connectFiles?(open: (file: File) => void): void;
+  /**
+   * Called once with a function that opens a file, for files arriving from outside (share sheet, "Open with"),
+   * and one that shows a short note, e.g. when a shared file got lost on the way.
+   */
+  connectFiles?(open: (file: File) => void, notify: (message: MessageKey) => void): void;
 }
 
 type Status = { kind: 'empty' } | { kind: 'loading' } | { kind: 'ready'; name: string } | { kind: 'error'; message: MessageKey };
@@ -64,7 +67,7 @@ function useMediaQuery(query: string): boolean {
 }
 
 export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }: ReaderProps) {
-  const [settings, update] = useSettings(store);
+  const [settings, update, settingsLoaded] = useSettings(store);
   const t = useCallback(
     (key: MessageKey, params?: Record<string, string | number>) => translate(settings.locale, key, params),
     [settings.locale],
@@ -282,9 +285,16 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
   // Files from outside arrive through this once; route them to the latest openFile.
   const openFileRef = useRef(openFile);
   openFileRef.current = openFile;
+  // A note waits for the saved language before it shows.
+  const [note, setNote] = useState<MessageKey | null>(null);
   useEffect(() => {
-    connectFiles?.((file) => void openFileRef.current(file));
+    connectFiles?.((file) => void openFileRef.current(file), setNote);
   }, []);
+  useEffect(() => {
+    if (!note || !settingsLoaded) return;
+    setToast(t(note));
+    setNote(null);
+  }, [note, settingsLoaded, t]);
 
   const openRecent = async (key: string) => {
     const file = await library?.load(key).catch(() => null);

@@ -1,4 +1,4 @@
 // Lightweight entry (no pdf.js) for other pages such as the welcome page: shared settings and the logo.
-export { useSettings } from './useSettings';
+export { loadSettings, useSettings } from './useSettings';
 export { createLocalStore } from './localStore';
 export { Logo } from './components/Logo';

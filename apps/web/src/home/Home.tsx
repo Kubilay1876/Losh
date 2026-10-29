@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { SUPPORT, translate, type KeyValueStore, type MessageKey } from '@losh/core';
+import { SUPPORT, translate, type KeyValueStore, type MessageKey, type Settings } from '@losh/core';
 import { Logo, useSettings } from '@losh/viewer/settings';
 import { LanguageMenu } from './LanguageMenu';
 import { NavMenu } from './NavMenu';
@@ -32,8 +32,8 @@ const PREVIEWS = [
   { mode: 'night', label: 'mode.night' },
 ] as const;
 
-export function Home({ store }: { store: KeyValueStore }) {
-  const [settings, update, loaded] = useSettings(store);
+export function Home({ store, initial }: { store: KeyValueStore; initial?: Settings }) {
+  const [settings, update, loaded] = useSettings(store, initial);
   const t = (key: MessageKey, params?: Record<string, string | number>) => translate(settings.locale, key, params);
   const rootRef = useRef<HTMLDivElement>(null);
   useReveal(rootRef, loaded);

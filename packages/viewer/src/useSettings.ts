@@ -3,18 +3,28 @@ import { DEFAULT_SETTINGS, detectLocale, sanitizeSettings, STORAGE_KEYS, type Ke
 
 const SAVE_DELAY_MS = 300;
 
-/** Loads settings once, then saves changes with a short delay (sliders fire many events). */
-export function useSettings(store: KeyValueStore): [Settings, (patch: Partial<Settings>) => void, boolean] {
-  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
-  const [loaded, setLoaded] = useState(false);
+/** The saved settings; a first visit gets the browser's language. */
+export async function loadSettings(store: KeyValueStore): Promise<Settings> {
+  const raw = await store.get(STORAGE_KEYS.settings);
+  const s = sanitizeSettings(raw);
+  if (raw === undefined) s.locale = detectLocale(navigator.languages ?? []);
+  return s;
+}
+
+/**
+ * Loads settings once, then saves changes with a short delay (sliders fire many events).
+ * Pages that loaded the settings before drawing (the prerendered welcome page) pass them as `initial`.
+ */
+export function useSettings(store: KeyValueStore, initial?: Settings): [Settings, (patch: Partial<Settings>) => void, boolean] {
+  const [settings, setSettings] = useState<Settings>(initial ?? DEFAULT_SETTINGS);
+  const [loaded, setLoaded] = useState(!!initial);
   const saveTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
+    if (initial) return;
     let cancelled = false;
-    store.get(STORAGE_KEYS.settings).then((raw) => {
+    void loadSettings(store).then((s) => {
       if (cancelled) return;
-      const s = sanitizeSettings(raw);
-      if (raw === undefined) s.locale = detectLocale(navigator.languages ?? []);
       setSettings(s);
       setLoaded(true);
     });

@@ -1,14 +1,20 @@
-import { detectLocale, translate } from '@losh/core';
+import { detectLocale, translate, type MessageKey } from '@losh/core';
 import { registerServiceWorker } from '../registerServiceWorker';
 
 const root = document.getElementById('app')!;
 registerServiceWorker('../sw.js', '../');
 
-/** Files that open the reader from outside: Android's share sheet and desktop "Open with → Losh". */
-function connectFiles(open: (file: File) => void): void {
+/**
+ * Files that open the reader from outside: Android's share sheet and desktop "Open with → Losh".
+ * A share lands on ?shared=1 either way: through the service worker with the file parked, or, when the service
+ * worker was not running, through the server's redirect (vercel.json) without it; then the reader says so.
+ */
+function connectFiles(open: (file: File) => void, notify: (message: MessageKey) => void): void {
   if (new URLSearchParams(location.search).has('shared')) {
     history.replaceState(null, '', location.pathname);
-    void takeSharedFile().then((file) => file && open(file));
+    void takeSharedFile()
+      .catch(() => null)
+      .then((file) => (file ? open(file) : notify('share.missing')));
   }
   const launchQueue = (window as { launchQueue?: { setConsumer(fn: (params: { files: FileSystemFileHandle[] }) => void): void } }).launchQueue;
   launchQueue?.setConsumer(async ({ files }) => {

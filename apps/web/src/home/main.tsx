@@ -1,9 +1,9 @@
 import '@losh/viewer/theme.css';
 import './home.css';
-import { render } from 'preact';
 import { createLocalStore } from '@losh/viewer/settings';
 import { registerServiceWorker } from '../registerServiceWorker';
+import { wake } from '../prerendered';
 import { Home } from './Home';
 
-render(<Home store={createLocalStore()} />, document.getElementById('home')!);
+wake('home', createLocalStore(), (store, initial) => <Home store={store} initial={initial} />);
 registerServiceWorker('./sw.js', './');

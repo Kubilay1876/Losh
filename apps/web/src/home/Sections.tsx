@@ -33,6 +33,8 @@ const STEP_SHOTS: Partial<Record<PlatformId, Record<number, Shot[]>>> = {
 };
 
 function detectPlatform(): PlatformId {
+  // The build prerenders this page without a browser; it shows the desktop tab until the page wakes up.
+  if (typeof document === 'undefined') return 'desktop';
   const ua = navigator.userAgent;
   // iPadOS presents itself as a Mac; touch gives it away.
   if (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return 'ios';
@@ -41,6 +43,7 @@ function detectPlatform(): PlatformId {
 }
 
 function isInstalled(): boolean {
+  if (typeof document === 'undefined') return false;
   return matchMedia('(display-mode: standalone)').matches || (navigator as { standalone?: boolean }).standalone === true;
 }
 

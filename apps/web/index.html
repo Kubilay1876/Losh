@@ -26,13 +26,19 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="Losh" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <!-- Keeps the prerendered copy hidden until the page redraws in the reader's language (src/prerendered.ts).
+         Only runs with JavaScript on; its hash is allowed in the CSP in vercel.json, and the build checks that. -->
+    <script>document.documentElement.classList.add('losh-boot')</script>
     <style>
       html { background: #0f0a1a; }
       body { margin: 0; }
+      /* Shown anyway after a moment if the page never wakes up. */
+      .losh-boot [data-prerendered] { visibility: hidden; animation: losh-show 0s 4s forwards; }
+      @keyframes losh-show { to { visibility: visible; } }
     </style>
   </head>
   <body>
-    <div id="home"></div>
+    <div id="home" data-prerendered></div>
     <script type="module" src="./src/home/main.tsx"></script>
   </body>
 </html>

@@ -12,7 +12,7 @@ export function Footer({ t, privacyHref }: Props) {
     <footer class="home-footer" data-reveal>
       <p>
         {t('home.footer.maker', { name: PROJECT.maker })} ·{' '}
-        <a href={PROJECT.githubUrl} target="_blank" rel="noopener noreferrer">
+        <a href={PROJECT.repoUrl} target="_blank" rel="noopener noreferrer">
           GitHub
         </a>
         {privacyHref && (

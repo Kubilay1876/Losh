@@ -1,4 +1,6 @@
-import type { Locale } from '@losh/core';
+import { PROJECT, type Locale } from '@losh/core';
+
+const REPO = PROJECT.repoUrl;
 
 /**
  * Long texts of the welcome page (install guide, how-to, FAQ), one block per language.
@@ -79,7 +81,7 @@ const tr: HomeContent = {
     intro: 'Aklına takılan bir şey varsa cevabı büyük ihtimalle burada.',
     items: [
       { q: "PDF'im bir yere yükleniyor mu?", a: "Hayır. Losh'un sunucusu yok; PDF tamamen kendi cihazında, tarayıcının içinde açılır. İstersen interneti kapatıp dene, yine çalışır." },
-      { q: 'Ücretli mi, üyelik gerekiyor mu?', a: "Hayır. Losh ücretsiz, reklamsız ve üyeliksiz. Kodun tamamı GitHub'da herkese açık." },
+      { q: 'Ücretli mi, üyelik gerekiyor mu?', a: `Hayır. Losh ücretsiz, reklamsız ve üyeliksiz. Kodun tamamı [GitHub'da](${REPO}) herkese açık.` },
       { q: 'İnternetsiz çalışır mı?', a: 'Evet. Siteyi bir kez açtıktan sonra Losh cihazına kaydedilir. Saklamayı seçtiğin kitaplar da internetsiz açılır.' },
       { q: 'Hangi cihazlarda çalışır?', a: 'Güncel bir tarayıcısı olan her cihazda: iPhone, iPad, Android, Windows, Mac ve Linux.' },
       { q: 'Kaldığım sayfa, işaretlerim ve ayarlarım nerede saklanıyor?', a: 'Sadece bu cihazda, tarayıcının hafızasında. Hesap olmadığı için başka cihazlara aktarılmaz.' },
@@ -146,7 +148,7 @@ const en: HomeContent = {
     intro: "If something is on your mind, the answer is probably here.",
     items: [
       { q: 'Is my PDF uploaded anywhere?', a: "No. Losh has no server; the PDF opens entirely on your own device, inside the browser. Try it with the internet switched off: it still works." },
-      { q: 'Does it cost anything? Do I need an account?', a: 'No. Losh is free, ad-free and needs no account. All of the code is public on GitHub.' },
+      { q: 'Does it cost anything? Do I need an account?', a: `No. Losh is free, ad-free and needs no account. All of the code is public [on GitHub](${REPO}).` },
       { q: 'Does it work offline?', a: 'Yes. After you open the site once, Losh is saved on your device. Books you chose to keep open offline too.' },
       { q: 'Which devices does it work on?', a: 'Any device with an up-to-date browser: iPhone, iPad, Android, Windows, Mac and Linux.' },
       { q: 'Where are my last page, highlights and settings stored?', a: "Only on this device, in the browser's storage. There are no accounts, so they are not copied to other devices." },
@@ -213,7 +215,7 @@ const es: HomeContent = {
     intro: 'Si tienes alguna duda, probablemente la respuesta esté aquí.',
     items: [
       { q: '¿Se sube mi PDF a algún sitio?', a: 'No. Losh no tiene servidor; el PDF se abre por completo en tu propio dispositivo, dentro del navegador. Pruébalo sin conexión: sigue funcionando.' },
-      { q: '¿Cuesta algo? ¿Necesito una cuenta?', a: 'No. Losh es gratis, sin anuncios y sin cuentas. Todo el código es público en GitHub.' },
+      { q: '¿Cuesta algo? ¿Necesito una cuenta?', a: `No. Losh es gratis, sin anuncios y sin cuentas. Todo el código es público [en GitHub](${REPO}).` },
       { q: '¿Funciona sin conexión?', a: 'Sí. Tras abrir el sitio una vez, Losh queda guardado en tu dispositivo. Los libros que decidiste guardar también se abren sin conexión.' },
       { q: '¿En qué dispositivos funciona?', a: 'En cualquiera con un navegador actualizado: iPhone, iPad, Android, Windows, Mac y Linux.' },
       { q: '¿Dónde se guardan mi última página, mis marcas y mis ajustes?', a: 'Solo en este dispositivo, en el almacenamiento del navegador. Como no hay cuentas, no se copian a otros dispositivos.' },
@@ -280,7 +282,7 @@ const fr: HomeContent = {
     intro: 'Si vous vous posez une question, la réponse est sûrement ici.',
     items: [
       { q: 'Mon PDF est-il envoyé quelque part ?', a: 'Non. Losh n’a pas de serveur ; le PDF s’ouvre entièrement sur votre appareil, dans le navigateur. Essayez sans internet : cela fonctionne toujours.' },
-      { q: 'Est-ce payant ? Faut-il un compte ?', a: 'Non. Losh est gratuit, sans publicité et sans compte. Tout le code est public sur GitHub.' },
+      { q: 'Est-ce payant ? Faut-il un compte ?', a: `Non. Losh est gratuit, sans publicité et sans compte. Tout le code est public [sur GitHub](${REPO}).` },
       { q: 'Est-ce que ça marche hors ligne ?', a: 'Oui. Après une première visite, Losh est enregistré sur votre appareil. Les livres que vous avez choisi de garder s’ouvrent aussi hors ligne.' },
       { q: 'Sur quels appareils ça fonctionne ?', a: 'Sur tout appareil doté d’un navigateur à jour : iPhone, iPad, Android, Windows, Mac et Linux.' },
       { q: 'Où sont gardés ma dernière page, mes surlignages et mes réglages ?', a: 'Uniquement sur cet appareil, dans le stockage du navigateur. Comme il n’y a pas de compte, ils ne sont pas copiés sur d’autres appareils.' },
@@ -347,7 +349,7 @@ const ru: HomeContent = {
     intro: 'Если у вас есть вопрос, ответ, скорее всего, здесь.',
     items: [
       { q: 'Мой PDF куда-то загружается?', a: 'Нет. У Losh нет сервера; PDF открывается полностью на вашем устройстве, в браузере. Попробуйте без интернета — всё работает.' },
-      { q: 'Это платно? Нужна регистрация?', a: 'Нет. Losh бесплатный, без рекламы и без регистрации. Весь код открыт на GitHub.' },
+      { q: 'Это платно? Нужна регистрация?', a: `Нет. Losh бесплатный, без рекламы и без регистрации. Весь код открыт [на GitHub](${REPO}).` },
       { q: 'Работает ли без интернета?', a: 'Да. После первого открытия сайта Losh сохраняется на устройстве. Книги, которые вы решили сохранить, тоже открываются без интернета.' },
       { q: 'На каких устройствах работает?', a: 'На любом устройстве с современным браузером: iPhone, iPad, Android, Windows, Mac и Linux.' },
       { q: 'Где хранятся моя последняя страница, выделения и настройки?', a: 'Только на этом устройстве, в хранилище браузера. Аккаунтов нет, поэтому на другие устройства они не переносятся.' },

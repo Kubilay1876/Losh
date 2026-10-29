@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <!-- This page answers every wrong address, at any depth: everything below is relative to the site root. -->
+    <base href="/" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0f0a1a" />
+    <meta name="robots" content="noindex" />
+    <title>Sayfa bulunamadı — Losh</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <!-- Keeps the prerendered copy hidden until the page redraws in the reader's language (src/prerendered.ts).
+         Only runs with JavaScript on; its hash is allowed in the CSP in vercel.json, and the build checks that. -->
+    <script>document.documentElement.classList.add('losh-boot')</script>
+    <style>
+      html { background: #0f0a1a; }
+      body { margin: 0; }
+      /* Shown anyway after a moment if the page never wakes up. */
+      .losh-boot [data-prerendered] { visibility: hidden; animation: losh-show 0s 4s forwards; }
+      @keyframes losh-show { to { visibility: visible; } }
+    </style>
+  </head>
+  <body>
+    <div id="notfound" data-prerendered></div>
+    <script type="module" src="./src/notfound/main.tsx"></script>
+  </body>
+</html>

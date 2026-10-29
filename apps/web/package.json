@@ -12,5 +12,8 @@
     "@losh/core": "^0.1.0",
     "@losh/viewer": "^0.1.0",
     "preact": "^11.1.0"
+  },
+  "devDependencies": {
+    "preact-render-to-string": "^6.8.2"
   }
 }

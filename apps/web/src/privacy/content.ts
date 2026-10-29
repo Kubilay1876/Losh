@@ -1,4 +1,4 @@
-import type { Locale } from '@losh/core';
+import { PROJECT, type Locale } from '@losh/core';
 
 /**
  * The privacy policy, one block per language. Same text markup as the welcome page:
@@ -14,7 +14,7 @@ export interface PrivacyContent {
 /** Bump this whenever the policy text changes. */
 export const PRIVACY_UPDATED = '2026-10-29';
 
-const REPO = 'https://github.com/Kubilay1876/Losh';
+const REPO = PROJECT.repoUrl;
 const VERCEL_PRIVACY = 'https://vercel.com/legal/privacy-policy';
 
 const tr: PrivacyContent = {

@@ -1,9 +1,9 @@
 import '@losh/viewer/theme.css';
 import '../home/home.css';
-import { render } from 'preact';
 import { createLocalStore } from '@losh/viewer/settings';
 import { registerServiceWorker } from '../registerServiceWorker';
+import { wake } from '../prerendered';
 import { Privacy } from './Privacy';
 
-render(<Privacy store={createLocalStore()} />, document.getElementById('privacy')!);
+wake('privacy', createLocalStore(), (store, initial) => <Privacy store={store} initial={initial} />);
 registerServiceWorker('../sw.js', '../');
