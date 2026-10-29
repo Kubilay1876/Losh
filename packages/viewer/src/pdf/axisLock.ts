@@ -10,7 +10,7 @@ const FLING_FRICTION = 0.92;
  * The browser does the vertical scrolling itself (`touch-action: pan-y` on the element: native and smooth);
  * sideways moves are done here, and only for swipes that are clearly sideways.
  */
-export function enableAxisLock(el: HTMLElement): () => void {
+export function enableAxisLock(el: HTMLElement, paused: () => boolean = () => false): () => void {
   let tracking = false;
   let axis: 'x' | 'y' | null = null;
   let startX = 0;
@@ -23,7 +23,7 @@ export function enableAxisLock(el: HTMLElement): () => void {
 
   const onStart = (e: TouchEvent) => {
     cancelAnimationFrame(fling);
-    tracking = e.touches.length === 1;
+    tracking = e.touches.length === 1 && !paused();
     if (!tracking) return;
     axis = null;
     startX = lastX = e.touches[0].clientX;

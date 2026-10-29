@@ -17,6 +17,8 @@ export interface ControllerEvents {
   onPageChange(page: number, total: number): void;
   onZoomChange(scale: number, preset: ZoomValue): void;
   onSearchChange(state: SearchState): void;
+  /** A page was drawn (again); `div` is its pdf.js page element. */
+  onPageRendered?(div: HTMLElement): void;
 }
 
 /** Images smaller than this (PDF points) are treated as decoration and not tracked. */
@@ -54,6 +56,7 @@ export class ReaderController {
     const classify = (e: { source: { div: HTMLElement; canvas?: HTMLCanvasElement | null } }) => classifyPageImages(e.source.div, e.source.canvas);
     this.eventBus.on('textlayerrendered', classify);
     this.eventBus.on('pagerendered', classify);
+    this.eventBus.on('pagerendered', (e: { source: { div: HTMLElement } }) => this.events.onPageRendered?.(e.source.div));
 
     this.eventBus.on('pagechanging', (e: { pageNumber: number }) => {
       this.events.onPageChange(e.pageNumber, this.viewer.pagesCount);

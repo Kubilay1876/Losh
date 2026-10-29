@@ -435,6 +435,149 @@ a.losh-brand:hover .losh-brand-text {
   mix-blend-mode: multiply;
 }
 
+/* ---------- Highlighter ---------- */
+/* Pastel like real highlighters; multiplied onto the paper, so black ink stays black on top of them. */
+[data-color='yellow'] { --mark: #ffe866; }
+[data-color='green'] { --mark: #b4ee9c; }
+[data-color='pink'] { --mark: #ffb3d6; }
+[data-color='blue'] { --mark: #a6d6ff; }
+
+/* Night modes turn marks dark along with the paper; stronger colours keep them easy to see there. */
+.losh:is([data-mode='night'], [data-mode='darkSepia']) .losh-mark[data-color='yellow'] { --mark: #f2cc2e; }
+.losh:is([data-mode='night'], [data-mode='darkSepia']) .losh-mark[data-color='green'] { --mark: #7fd35f; }
+.losh:is([data-mode='night'], [data-mode='darkSepia']) .losh-mark[data-color='pink'] { --mark: #f77fb6; }
+.losh:is([data-mode='night'], [data-mode='darkSepia']) .losh-mark[data-color='blue'] { --mark: #6db8f5; }
+
+/* Inside the page picture (see pdf/marks.ts), so each reading mode colours marks along with the paper. */
+.losh-marks {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.losh-mark > i {
+  position: absolute;
+  border-radius: 3px;
+  background: var(--mark);
+}
+
+/* While the highlighter is on, one finger (or the mouse) paints instead of scrolling or selecting. */
+.losh[data-pen] .losh-scroll {
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.losh[data-pen='eraser'] .losh-scroll {
+  cursor: cell;
+}
+
+.losh[data-pen] .pdfViewer * {
+  cursor: inherit;
+}
+
+.losh[data-pen] .textLayer {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.losh[data-pen] .annotationLayer,
+.losh[data-pen] .annotationLayer * {
+  pointer-events: none !important;
+}
+
+.losh-marktools {
+  position: absolute;
+  right: 22px;
+  bottom: 20px;
+  z-index: 4;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 10px;
+}
+
+.losh-fab {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: 1px solid var(--ui-border);
+  border-radius: 50%;
+  background: var(--ui-surface);
+  color: var(--ui-text);
+  box-shadow: var(--ui-shadow);
+  cursor: pointer;
+}
+
+.losh-fab svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* A dot of the colour in hand. */
+.losh-fab::after {
+  content: '';
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--mark);
+  box-shadow: 0 0 0 2px var(--ui-surface);
+}
+
+.losh-fab:hover {
+  box-shadow: var(--ui-shadow), var(--glow);
+}
+
+.losh .losh-fab[aria-pressed='true'] {
+  background: var(--ui-accent);
+  color: var(--ui-accent-text);
+  border-color: transparent;
+}
+
+.losh-fab[aria-pressed='true']::after {
+  box-shadow: 0 0 0 2px var(--ui-accent-text);
+}
+
+.losh-marktools-palette {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid var(--ui-border);
+  border-radius: 999px;
+  background: var(--ui-surface);
+  box-shadow: var(--ui-shadow);
+}
+
+.losh-swatch {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--mark) 0 12px, transparent 12.5px);
+  cursor: pointer;
+}
+
+.losh-swatch[aria-pressed='true'] {
+  background: radial-gradient(circle, var(--mark) 0 10px, transparent 10.5px 13px, var(--ui-text) 13.5px 15.5px, transparent 16px);
+}
+
+.losh-marktools-sep {
+  width: 22px;
+  height: 1px;
+  margin: 2px 0;
+  background: var(--ui-border);
+}
+
 /* ---------- Empty state & drop zone ---------- */
 .losh-empty {
   position: absolute;
@@ -602,7 +745,8 @@ a.losh-brand:hover .losh-brand-text {
 .losh-keep {
   position: absolute;
   right: 16px;
-  bottom: 20px;
+  /* Above the pen button. */
+  bottom: 88px;
   z-index: 6;
   width: min(380px, calc(100% - 32px));
   padding: 14px 16px;
@@ -930,7 +1074,7 @@ a.losh-brand:hover .losh-brand-text {
   }
 
   .losh-toast {
-    bottom: calc(var(--dock-h) + 14px);
+    bottom: calc(var(--dock-h) + 76px);
     width: max-content;
     max-width: calc(100% - 32px);
   }
@@ -940,11 +1084,25 @@ a.losh-brand:hover .losh-brand-text {
     left: 12px;
     right: 12px;
     width: auto;
-    bottom: calc(var(--dock-h) + 12px);
+    bottom: calc(var(--dock-h) + 76px);
   }
 
   .losh-drop {
     padding: 28px 20px;
+  }
+
+  .losh-marktools {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: 12px;
+  }
+
+  /* With the pen on, tips keep left of the colours. */
+  .losh[data-pen] .losh-toast {
+    left: 12px;
+    right: 80px;
+    width: auto;
+    max-width: none;
+    transform: none;
   }
 }
 
@@ -961,6 +1119,10 @@ a.losh-brand:hover .losh-brand-text {
   padding-top: env(safe-area-inset-top);
   padding-bottom: 0;
   background: var(--losh-viewer-bg);
+}
+
+.losh[data-bars='hidden'] .losh-marktools {
+  display: none;
 }
 
 /* Moved with `top`, not `transform`: a transform would also drag the fixed bottom bar inside it. */
@@ -1055,7 +1217,8 @@ a.losh-brand:hover .losh-brand-text {
   }
 
   .losh-keep,
-  .losh-recent {
+  .losh-recent,
+  .losh-marktools-palette {
     animation: losh-rise 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
 

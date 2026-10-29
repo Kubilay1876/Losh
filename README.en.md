@@ -30,6 +30,7 @@
 - **Eye-friendly modes:** Normal, Paper, Night and Dark sepia, plus warm light, brightness and contrast. In night mode, photos keep their natural colours.
 - **Fit text:** drops the empty page margins and enlarges the text to the width of the screen, so on a phone you read without scrolling sideways.
 - **Reading mode:** on a phone, tap the page once and the menus go away.
+- **Highlighter:** mark what matters in 4 colours with the pen in the bottom corner. Even a rough swipe snaps to the lines and never spills over; marks are kept with the book on your device.
 - **Pick up where you left off:** remembers your page in every book and, if you like, keeps books on your device (**Recently read**).
 - **Eye breaks (20-20-20):** if you want, every 20 minutes it guides a 20-second break: look far away, then blink.
 - **Works everywhere:** add it to the home screen on iPhone, Android or a computer; after the first visit it works offline.

@@ -8,8 +8,12 @@ export interface KeyValueStore {
 export const STORAGE_KEYS = {
   settings: 'losh.settings',
   position: (docKey: string) => `losh.pos.${docKey}`,
+  /** Highlighter marks of one PDF. */
+  marks: (docKey: string) => `losh.marks.${docKey}`,
   /** Set once the "tap the page to hide the menus" tip has been shown. */
   barsHint: 'losh.hint.bars',
+  /** Set once the highlighter tip has been shown. */
+  marksHint: 'losh.hint.marks',
 } as const;
 
 export function createMemoryStore(initial: Record<string, unknown> = {}): KeyValueStore {

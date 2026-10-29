@@ -30,6 +30,7 @@
 - **Göz dostu modlar:** Normal, Kağıt, Gece ve Koyu sepya; sıcak ışık, parlaklık ve kontrast ayarı. Gece modunda fotoğraflar doğal renginde kalır.
 - **Yazıya sığdır:** Sayfanın boş kenarlarını atar, yazıyı ekran genişliğine büyütür. Telefonda yana kaydırmadan okursun.
 - **Okuma modu:** Telefonda sayfaya bir kez dokun, menüler kaybolsun.
+- **İşaretleyici:** Sağ alttaki kalemle önemli yerleri 4 renkle işaretle. Parmağınla kabaca geçsen de işaret satıra oturur, taşmaz; işaretler kitapla birlikte cihazında saklanır.
 - **Kaldığın yerden devam:** Her kitapta kaldığın sayfayı hatırlar; istersen kitapları cihazında saklar (**Son okunanlar**).
 - **Göz molası (20-20-20):** İstersen 20 dakikada bir, 20 saniyelik bir mola verdirir: önce uzağa bak, sonra göz kırp.
 - **Her yerde çalışır:** iPhone, Android ve bilgisayarda ana ekrana eklenir; bir kez açtıktan sonra internetsiz çalışır.

@@ -125,3 +125,27 @@ export const IconFile = () => (
     <path d="M14 3v5h5M9 13h6M9 17h4" />
   </svg>
 );
+
+/** Highlighter: a marker with a chisel tip over a stroke of colour. */
+export const IconHighlighter = () => (
+  <svg {...base}>
+    <path d="m14.5 3.5 6 6-8.5 8.5-6-6z" />
+    <path d="m6 12-1.5 4.5 3 3L12 18" />
+    <path d="M3 21h6" />
+  </svg>
+);
+
+export const IconEraser = () => (
+  <svg {...base}>
+    <path d="M9 20h11" />
+    <path d="M4.7 14.3 13.3 5.7a2 2 0 0 1 2.8 0l3.2 3.2a2 2 0 0 1 0 2.8L11 20H9.4z" />
+    <path d="m9 10 5 5" />
+  </svg>
+);
+
+export const IconUndo = () => (
+  <svg {...base}>
+    <path d="M9 14 4 9l5-5" />
+    <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
+  </svg>
+);

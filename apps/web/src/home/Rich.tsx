@@ -12,6 +12,8 @@ const UI_NAMES: Record<string, MessageKey> = {
   settings: 'settings.title',
   clear: 'recent.clear',
   breakReminder: 'settings.breakReminder',
+  undo: 'mark.undo',
+  erase: 'mark.erase',
 };
 
 const LINK = /\[([^\]]+)\]\(([^)\s]+)\)/g;

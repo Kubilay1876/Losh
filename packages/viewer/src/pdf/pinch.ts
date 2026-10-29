@@ -6,7 +6,8 @@ export interface PinchTarget {
 }
 
 /**
- * Two-finger pinch on the pages zooms the PDF (sharp re-render) instead of blowing up the whole app.
+ * Two-finger pinch on the pages zooms the PDF (sharp re-render) instead of blowing up the whole app,
+ * and two fingers moving together scroll (the only way to scroll while the highlighter is on).
  * While the fingers move, the pages are only stretched like a picture (cheap, smooth); the real
  * zoom, which re-lays out every page, happens once at the end.
  * iOS ignores `user-scalable=no`, so its own gesture events are cancelled here as well.
@@ -16,6 +17,8 @@ export function enablePinchZoom(el: HTMLElement, content: HTMLElement, target: P
   let origin: [number, number] = [0, 0];
   let range: [number, number] = [1, 1];
   let factor = 1;
+  let last: [number, number] = [0, 0];
+  let startScroll: [number, number] = [0, 0];
   const distance = (t: TouchList) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
 
   const reset = () => {
@@ -29,6 +32,8 @@ export function enablePinchZoom(el: HTMLElement, content: HTMLElement, target: P
     const [a, b] = [e.touches[0], e.touches[1]];
     startDistance = distance(e.touches);
     origin = [(a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2];
+    last = origin;
+    startScroll = [el.scrollLeft, el.scrollTop];
     range = target.range();
     factor = 1;
     const box = content.getBoundingClientRect();
@@ -38,15 +43,21 @@ export function enablePinchZoom(el: HTMLElement, content: HTMLElement, target: P
   const onMove = (e: TouchEvent) => {
     if (e.touches.length !== 2 || !startDistance) return;
     if (e.cancelable) e.preventDefault();
+    const [a, b] = [e.touches[0], e.touches[1]];
+    const mid: [number, number] = [(a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2];
+    el.scrollLeft -= mid[0] - last[0];
+    el.scrollTop -= mid[1] - last[1];
+    last = mid;
     factor = Math.min(range[1], Math.max(range[0], distance(e.touches) / startDistance));
-    content.style.transform = `scale(${factor})`;
+    // Fingers sliding together never hold exactly the same distance: no wobble while just scrolling.
+    content.style.transform = Math.abs(factor - 1) < 0.03 ? '' : `scale(${factor})`;
   };
   const onEnd = (e: TouchEvent) => {
     if (e.touches.length >= 2 || !startDistance) return;
     startDistance = 0;
     reset();
-    // Skip finger jitter that is not a real zoom.
-    if (Math.abs(factor - 1) >= 0.03) target.zoomBy(factor, origin);
+    // Skip finger jitter that is not a real zoom. The spot that was under the fingers has moved with the scrolling.
+    if (Math.abs(factor - 1) >= 0.03) target.zoomBy(factor, [origin[0] - (el.scrollLeft - startScroll[0]), origin[1] - (el.scrollTop - startScroll[1])]);
   };
   const cancel = (e: Event) => e.preventDefault();
 

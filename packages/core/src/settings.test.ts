@@ -56,4 +56,10 @@ describe('sanitizeSettings', () => {
     expect(sanitizeSettings({ fitText: true }).fitText).toBe(true);
     expect(sanitizeSettings({ fitText: 'yes' }).fitText).toBe(false);
   });
+
+  it('remembers the highlighter colour, yellow at first', () => {
+    expect(DEFAULT_SETTINGS.markColor).toBe('yellow');
+    expect(sanitizeSettings({ markColor: 'blue' }).markColor).toBe('blue');
+    expect(sanitizeSettings({ markColor: 'red' }).markColor).toBe('yellow');
+  });
 });

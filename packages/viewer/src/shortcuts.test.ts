@@ -17,6 +17,13 @@ describe('matchShortcut', () => {
     expect(matchShortcut(key('ArrowRight'))).toEqual({ type: 'nextPage' });
     expect(matchShortcut(key('PageUp'))).toEqual({ type: 'prevPage' });
     expect(matchShortcut(key('?'))).toEqual({ type: 'help' });
+    expect(matchShortcut(key('h'))).toEqual({ type: 'mark' });
+  });
+
+  it('undoes the last mark with Ctrl+Z, but not while typing', () => {
+    expect(matchShortcut(key('z', { ctrlKey: true }))).toEqual({ type: 'undo' });
+    expect(matchShortcut(key('Z', { metaKey: true }))).toEqual({ type: 'undo' });
+    expect(matchShortcut(key('z', { ctrlKey: true, inTextField: true }))).toBeNull();
   });
 
   it('opens search with Ctrl+F, Cmd+F and /', () => {

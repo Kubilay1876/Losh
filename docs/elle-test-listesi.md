@@ -102,3 +102,23 @@ Bunlar yayındaki sitede denenir: https://loshreader.vercel.app
 - [ ] **5 dk sonra** 5 dakika sonra yeniden hatırlatıyor; **Atla** kapatıyor.
 - [ ] Losh arka plandayken ya da telefon kilitliyken süre işlemiyor.
 - [ ] Görünüm ayarlarında hatırlatıcı açılıp kapanıyor ve aralığı (10–60 dk) değiştirilebiliyor.
+
+## İşaretleyici
+
+### iPhone
+- [ ] Bir PDF açınca sağ altta, alt çubuğun hemen üstünde kalem düğmesi var. Sayfaya dokunup menüleri gizleyince o da kayboluyor.
+- [ ] Kaleme basınca 4 renk, silgi ve geri al açılıyor; ilk seferde "Kaydırmak için iki parmak kullan" ipucu çıkıyor.
+- [ ] Parmağınla bir satırın üstünden geçince işaret **satıra oturuyor**: sadece kelimeler boyanıyor, üst ve alt satıra taşmıyor; elin biraz kaysa da tek satırda kalıyor.
+- [ ] Birkaç satır boyunca aşağı çekince o satırlar düzgünce boyanıyor (ilk satır başladığın kelimeden, son satır bitirdiğin kelimeye kadar).
+- [ ] Kalem açıkken tek parmak sayfayı kaydırmıyor; **iki parmakla** kaydırma ve yakınlaştırma çalışıyor.
+- [ ] Kalem açıkken uzun basınca iPhone'un kopyala/seç menüsü çıkmıyor.
+- [ ] Başka renk seçince sonraki işaret o renkte; kalem düğmesindeki küçük nokta da o renge dönüyor.
+- [ ] **Geri al** son işareti kaldırıyor; **Silgi** seçiliyken bir işarete dokununca o işaret siliniyor.
+- [ ] Gece ve koyu sepya modunda işaretler koyu renkli şerit olarak görünüyor, üstündeki yazı rahat okunuyor.
+- [ ] Yakınlaştırınca, "Yazıya sığdır"ı açınca işaretler yerinde kalıyor.
+- [ ] Losh'u kapatıp aynı PDF'i yeniden açınca işaretler duruyor.
+- [ ] Taranmış (fotoğraf gibi) bir kitapta da işaret satırın yüksekliğinde, düz bir şerit oluyor.
+- [ ] Kalem düğmesine yeniden basınca normal okumaya dönülüyor: tek parmak yine kaydırıyor.
+
+### Bilgisayar
+- [ ] Fareyle yazının üstünden sürükleyince aynı şekilde satıra oturuyor; **H** kalemi açıp kapatıyor, **Ctrl+Z** geri alıyor, **Esc** kalemi kapatıyor.

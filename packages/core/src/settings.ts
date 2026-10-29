@@ -1,3 +1,4 @@
+import { isMarkColor, type MarkColor } from './marks';
 import { isModeId, type ModeId } from './modes';
 
 export const LOCALES = ['tr', 'en', 'es', 'fr', 'ru'] as const;
@@ -21,6 +22,8 @@ export interface Settings {
   keepRecent: KeepRecent;
   /** Open PDFs zoomed so the text column (without the empty page margins) fills the screen width. */
   fitText: boolean;
+  /** Last highlighter colour picked. */
+  markColor: MarkColor;
   breakReminder: {
     enabled: boolean;
     intervalMinutes: number;
@@ -45,6 +48,7 @@ export const DEFAULT_SETTINGS: Settings = {
   locale: 'tr',
   keepRecent: 'ask',
   fitText: false,
+  markColor: 'yellow',
   breakReminder: { enabled: false, intervalMinutes: 20, asked: false },
 };
 
@@ -71,6 +75,7 @@ export function sanitizeSettings(raw: unknown): Settings {
     locale: (LOCALES as readonly unknown[]).includes(r.locale) ? (r.locale as Locale) : d.locale,
     keepRecent: (KEEP_RECENT as readonly unknown[]).includes(r.keepRecent) ? (r.keepRecent as KeepRecent) : d.keepRecent,
     fitText: bool(r.fitText, d.fitText),
+    markColor: isMarkColor(r.markColor) ? r.markColor : d.markColor,
     breakReminder: {
       enabled: bool(br.enabled, d.breakReminder.enabled),
       intervalMinutes: clampNumber(br.intervalMinutes, SETTINGS_LIMITS.intervalMinutes, d.breakReminder.intervalMinutes),

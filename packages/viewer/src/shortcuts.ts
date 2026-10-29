@@ -12,6 +12,8 @@ export type ShortcutAction =
   | { type: 'fitWidth' }
   | { type: 'settings' }
   | { type: 'help' }
+  | { type: 'mark' }
+  | { type: 'undo' }
   | { type: 'close' };
 
 /** Shown in the help dialog. Keep in sync with matchShortcut(). */
@@ -24,6 +26,8 @@ export const SHORTCUT_HELP: { keys: string[]; label: MessageKey }[] = [
   { keys: ['+', '−'], label: 'shortcut.zoom' },
   { keys: ['0'], label: 'shortcut.fitWidth' },
   { keys: ['S'], label: 'shortcut.settings' },
+  { keys: ['H'], label: 'shortcut.mark' },
+  { keys: ['Ctrl + Z'], label: 'shortcut.undo' },
   { keys: ['?'], label: 'shortcut.help' },
   { keys: ['Esc'], label: 'shortcut.close' },
 ];
@@ -40,6 +44,7 @@ export interface KeyInput {
 export function matchShortcut(e: KeyInput): ShortcutAction | null {
   const mod = e.ctrlKey || e.metaKey;
   if (mod && !e.altKey && e.key.toLowerCase() === 'f') return { type: 'search' };
+  if (mod && !e.altKey && !e.inTextField && e.key.toLowerCase() === 'z') return { type: 'undo' };
   if (e.key === 'Escape') return { type: 'close' };
   if (e.inTextField || mod || e.altKey) return null;
 
@@ -76,6 +81,9 @@ export function matchShortcut(e: KeyInput): ShortcutAction | null {
       return { type: 'settings' };
     case '?':
       return { type: 'help' };
+    case 'h':
+    case 'H':
+      return { type: 'mark' };
     default:
       return null;
   }

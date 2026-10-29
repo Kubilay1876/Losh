@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks';
-import { BREAK_SNOOZE_MINUTES, computeFilters, MODE_IDS, STORAGE_KEYS, translate, type KeyValueStore, type MessageKey } from '@losh/core';
+import { BREAK_SNOOZE_MINUTES, computeFilters, MODE_IDS, sanitizeMarks, STORAGE_KEYS, translate, type KeyValueStore, type Mark, type MarkRect, type MessageKey } from '@losh/core';
 import { ReaderController, type SearchState, type ZoomValue } from '../pdf/controller';
 import { documentKey } from '../pdf/docKey';
 import { enableAxisLock } from '../pdf/axisLock';
 import { enablePinchZoom } from '../pdf/pinch';
+import { createSnapper, markAt, MarkPainter } from '../pdf/marks';
+import { enablePen, type PenTool } from '../pdf/pen';
 import type { RecentLibrary } from '../library';
 import { useSettings } from '../useSettings';
 import { useBreakReminder } from '../useBreakReminder';
@@ -14,6 +16,7 @@ import { SearchBar } from './SearchBar';
 import { HelpDialog } from './HelpDialog';
 import { RecentList, type RecentItem } from './RecentList';
 import { BreakReminder } from './BreakReminder';
+import { MarkTools } from './MarkTools';
 import { IconBook, IconCandle, IconChevronLeft, IconChevronRight, IconFitText, IconHelp, IconMinus, IconMoon, IconOpen, IconPlus, IconSearch, IconSliders, IconSun } from './icons';
 
 export interface ReaderProps {
@@ -39,6 +42,13 @@ const TOUCH_UI_QUERY = '(max-width: 640px), (pointer: coarse)';
 const BARS_HINT_DELAY_MS = 1500;
 /** Reading time before asking, once, whether to turn on eye break reminders. */
 const BREAK_ASK_AFTER_MS = 45_000;
+/** Undo remembers this many highlighter steps. */
+const UNDO_LIMIT = 100;
+
+/** One highlighter step, as undo sees it. */
+type MarkStep = { added: Mark } | { removed: Mark };
+
+const newMarkId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
 function isPdf(file: File): boolean {
   return file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
@@ -93,11 +103,25 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
   const [barsEverAway, setBarsEverAway] = useState(false);
   const [barsHintSeen, setBarsHintSeen] = useState(true);
   const [breakAsk, setBreakAsk] = useState(false);
+  // Highlighter: marks live in a ref and are drawn straight onto the pages; React only tracks the buttons.
+  const [penTool, setPenTool] = useState<PenTool | null>(null);
+  const penToolRef = useRef(penTool);
+  penToolRef.current = penTool;
+  const markColorRef = useRef(settings.markColor);
+  markColorRef.current = settings.markColor;
+  const painterRef = useRef<MarkPainter | null>(null);
+  const marksRef = useRef<Mark[]>([]);
+  const undoRef = useRef<MarkStep[]>([]);
+  const [canUndo, setCanUndo] = useState(false);
+  const [marksHintSeen, setMarksHintSeen] = useState(true);
 
   // --- pdf.js controller -------------------------------------------------
   // A layout effect, so the controller exists before the first paint: a file picked or shared
   // in that first moment must not be dropped.
   useLayoutEffect(() => {
+    const viewerEl = scrollRef.current!.querySelector<HTMLElement>('.pdfViewer')!;
+    const painter = new MarkPainter(viewerEl);
+    painterRef.current = painter;
     const controller = new ReaderController(scrollRef.current!, pdfAssetsBase, {
       onPageChange(current, total) {
         currentPageRef.current = current;
@@ -112,14 +136,44 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
         setZoom({ scale, preset });
       },
       onSearchChange: setSearch,
+      onPageRendered: (div) => painter.paint(div),
     });
     controllerRef.current = controller;
-    const stopPinch = enablePinchZoom(scrollRef.current!, scrollRef.current!.querySelector<HTMLElement>('.pdfViewer')!, {
+    const stopPinch = enablePinchZoom(scrollRef.current!, viewerEl, {
       range: () => controller.zoomRange(),
       zoomBy: (factor, origin) => controller.zoomBy(factor, origin),
     });
-    const stopAxisLock = enableAxisLock(scrollRef.current!);
+    const stopAxisLock = enableAxisLock(scrollRef.current!, () => penToolRef.current !== null);
+    // The page under a stroke is read once per stroke, then every finger move snaps quickly.
+    let snap: { div: HTMLElement; at: ReturnType<typeof createSnapper> } | null = null;
+    const snapped = (div: HTMLElement, points: [number, number][]): MarkRect[] | null => {
+      if (snap?.div !== div) snap = { div, at: createSnapper(div) };
+      return snap.at(points);
+    };
+    const stopPen = enablePen(scrollRef.current!, {
+      tool: () => penToolRef.current,
+      draw(div, points) {
+        const rects = snapped(div, points);
+        painter.setDraft(rects && { page: Number(div.dataset.pageNumber), color: markColorRef.current, rects });
+      },
+      commit(div, points) {
+        const rects = snapped(div, points);
+        snap = null;
+        painter.setDraft(null);
+        if (rects) changeMarksRef.current({ added: { id: newMarkId(), page: Number(div.dataset.pageNumber), color: markColorRef.current, rects } });
+      },
+      cancel() {
+        snap = null;
+        painter.setDraft(null);
+      },
+      erase(div, x, y) {
+        const page = Number(div.dataset.pageNumber);
+        const hit = markAt(div, marksRef.current.filter((m) => m.page === page), x, y);
+        if (hit) changeMarksRef.current({ removed: hit });
+      },
+    });
     return () => {
+      stopPen();
       stopAxisLock();
       stopPinch();
       controller.destroy();
@@ -128,7 +182,8 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
 
   useEffect(() => {
     if (!toast) return;
-    const id = setTimeout(() => setToast(''), TOAST_MS);
+    // Long tips stay a little longer, so there is time to read them.
+    const id = setTimeout(() => setToast(''), Math.max(TOAST_MS, toast.length * 60));
     return () => clearTimeout(id);
   }, [toast]);
 
@@ -189,6 +244,11 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
       setKeepAsk(null);
       setBarsAway(false);
       controller.clearSearch();
+      setPenTool(null);
+      marksRef.current = [];
+      undoRef.current = [];
+      setCanUndo(false);
+      painterRef.current?.set([]);
       try {
         const bytes = new Uint8Array(await file.arrayBuffer());
         // Hash before opening: pdf.js transfers the buffer to its worker.
@@ -196,6 +256,9 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
         const saved = await store.get<{ page?: number }>(STORAGE_KEYS.position(key));
         const startPage = typeof saved?.page === 'number' ? saved.page : 1;
         docKeyRef.current = null;
+        // Before the pages are drawn, so each page shows its marks right away.
+        marksRef.current = sanitizeMarks(await store.get(STORAGE_KEYS.marks(key)));
+        painterRef.current?.set(marksRef.current);
         await controller.open(bytes, startPage, settings.fitText ? 'text-width' : 'page-width');
         docKeyRef.current = key;
         setStatus({ kind: 'ready', name: file.name });
@@ -242,6 +305,46 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
 
   const pickFile = () => fileInput.current?.click();
 
+  // --- highlighter -------------------------------------------------------------
+  /** Applies one step (or undoes one), redraws, and saves this PDF's marks on the device. */
+  const changeMarks = useCallback(
+    (step: MarkStep, undoing = false) => {
+      const marks = 'added' in step ? [...marksRef.current, step.added] : marksRef.current.filter((m) => m.id !== step.removed.id);
+      marksRef.current = marks;
+      painterRef.current?.set(marks);
+      const key = docKeyRef.current;
+      if (key) void (marks.length ? store.set(STORAGE_KEYS.marks(key), marks) : store.remove(STORAGE_KEYS.marks(key)));
+      if (!undoing) undoRef.current = [...undoRef.current, step].slice(-UNDO_LIMIT);
+      setCanUndo(undoRef.current.length > 0);
+    },
+    [store],
+  );
+  const changeMarksRef = useRef(changeMarks);
+  changeMarksRef.current = changeMarks;
+
+  const undoMark = useCallback(() => {
+    const step = undoRef.current.pop();
+    if (step) changeMarks('added' in step ? { removed: step.added } : { added: step.removed }, true);
+  }, [changeMarks]);
+
+  useEffect(() => {
+    void store.get<boolean>(STORAGE_KEYS.marksHint).then((seen) => setMarksHintSeen(seen === true));
+  }, [store]);
+
+  const choosePenTool = useCallback(
+    (tool: PenTool | null) => {
+      setPenTool(tool);
+      if (!tool) return;
+      window.getSelection()?.removeAllRanges();
+      if (!marksHintSeen) {
+        setToast(translate(settings.locale, touchUi ? 'mark.hintTouch' : 'mark.hintMouse'));
+        setMarksHintSeen(true);
+        void store.set(STORAGE_KEYS.marksHint, true);
+      }
+    },
+    [marksHintSeen, settings.locale, touchUi, store],
+  );
+
   // --- keyboard -------------------------------------------------------------
   const closeTopmost = useCallback(() => {
     if (helpOpen) setHelpOpen(false);
@@ -249,8 +352,8 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
     else if (searchOpen) {
       setSearchOpen(false);
       controllerRef.current?.clearSearch();
-    }
-  }, [helpOpen, settingsOpen, searchOpen]);
+    } else if (penTool) setPenTool(null);
+  }, [helpOpen, settingsOpen, searchOpen, penTool]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -300,12 +403,20 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
         case 'help':
           setHelpOpen(true);
           break;
+        case 'mark':
+          if (!hasDoc) return;
+          choosePenTool(penTool ? null : 'pen');
+          break;
+        case 'undo':
+          if (!hasDoc || !undoRef.current.length) return;
+          undoMark();
+          break;
       }
       e.preventDefault();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [helpOpen, status.kind, settings.mode, update, closeTopmost]);
+  }, [helpOpen, status.kind, settings.mode, update, closeTopmost, penTool, choosePenTool, undoMark]);
 
   // --- drag & drop -------------------------------------------------------------
   const dragDepth = useRef(0);
@@ -347,7 +458,7 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
   const hasDoc = status.kind === 'ready';
 
   // --- bars out of the way while reading (touch screens) ---------------------------
-  const barsHidden = barsAway && touchUi && hasDoc && !searchOpen && !settingsOpen;
+  const barsHidden = barsAway && touchUi && hasDoc && !searchOpen && !settingsOpen && !penTool;
 
   // The pages area grows or shrinks when the bars go or come back; scroll by the same amount so the text stays still.
   useLayoutEffect(() => {
@@ -379,7 +490,7 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
   }, [touchUi, hasDoc, barsHintSeen, keepAsk, breakAsk, toast, t, markBarsHintSeen]);
 
   const onPageTap = (e: MouseEvent) => {
-    if (!touchUi || !hasDoc || searchOpen || settingsOpen) return;
+    if (!touchUi || !hasDoc || searchOpen || settingsOpen || penTool) return;
     // Links in the PDF keep working, and a tap that clears a text selection is not a toggle.
     if ((e.target as Element).closest('a, button, input, select, textarea')) return;
     if (window.getSelection()?.isCollapsed === false) return;
@@ -417,6 +528,7 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
       class={`losh${filters.imageRestoreFilter ? ' losh-restore-images' : ''}${filters.pageTint !== 'transparent' ? ' losh-tinted' : ''}`}
       data-mode={settings.mode}
       data-bars={barsHidden ? 'hidden' : barsEverAway ? 'back' : undefined}
+      data-pen={penTool ?? undefined}
       style={styleVars}
       lang={settings.locale}
       {...dropHandlers}
@@ -595,6 +707,18 @@ export function Reader({ store, pdfAssetsBase, homeHref, library, connectFiles }
             onClose={() => setSettingsOpen(false)}
             recentBytes={library ? recent.reduce((sum, r) => sum + r.size, 0) : undefined}
             onClearRecent={() => void clearRecent()}
+          />
+        )}
+        {/* Before the pages, so the keyboard reaches it right after the toolbar (it floats in the corner either way). */}
+        {hasDoc && (
+          <MarkTools
+            t={t}
+            tool={penTool}
+            color={settings.markColor}
+            canUndo={canUndo}
+            onTool={choosePenTool}
+            onColor={(markColor) => update({ markColor })}
+            onUndo={undoMark}
           />
         )}
         <div class="losh-scroll" ref={scrollRef} tabIndex={0} role="region" aria-label={status.kind === 'ready' ? status.name : t('app.name')} onClick={onPageTap}>
