@@ -129,3 +129,8 @@ Bunlar yayındaki sitede denenir: https://loshreader.vercel.app
 - [ ] Karta dokununca kitap kaldığın sayfada açılıyor.
 - [ ] 7 ya da daha fazla kitap varken **Kitap ara** kutusu çıkıyor; "isik" yazınca "Işık…" bulunuyor (Türkçe harfler ve büyük/küçük harf fark etmiyor), bulunamayınca söylüyor.
 - [ ] Ayarlardaki not "En son açtığın 30 PDF saklanır" diyor.
+
+## Gece modunda fotoğraflar
+- [ ] Kapağı tek büyük fotoğraf olan bir kitapta (ör. yemek kitabı) gece modunda kapak **doğal renkte**, negatif gibi değil.
+- [ ] Siyah-beyaz fotoğraflar da doğal kalıyor; gri çizim ve tablolar yazıyla birlikte koyulaşıyor.
+- [ ] Taranmış (fotoğrafı çekilmiş) kitap sayfaları gece modunda yine koyu zemin, açık yazı.

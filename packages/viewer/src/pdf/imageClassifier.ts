@@ -1,7 +1,10 @@
 import { classifyImage, pixelStats } from '@losh/core';
 
-/** Each image area is scaled down to SAMPLE×SAMPLE pixels before measuring colour. */
-const SAMPLE = 48;
+/**
+ * Each image is scaled down to at most this width (keeping its shape) before measuring. Sharp enough
+ * that the lines of a scanned page stay apart from the paper between them, small enough to be quick.
+ */
+const SAMPLE_WIDTH = 120;
 let scratch: CanvasRenderingContext2D | null = null;
 
 /**
@@ -14,12 +17,8 @@ export function classifyPageImages(pageDiv: HTMLElement, canvas: HTMLCanvasEleme
   const cv = canvas.getBoundingClientRect();
   if (!cv.width || !cv.height) return;
 
-  if (!scratch) {
-    const c = document.createElement('canvas');
-    c.width = c.height = SAMPLE;
-    scratch = c.getContext('2d', { willReadFrequently: true });
-    if (!scratch) return;
-  }
+  scratch ??= document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+  if (!scratch) return;
 
   for (const ph of placeholders) {
     const r = ph.getBoundingClientRect();
@@ -29,9 +28,12 @@ export function classifyPageImages(pageDiv: HTMLElement, canvas: HTMLCanvasEleme
     const sh = Math.min(canvas.height - sy, (r.height / cv.height) * canvas.height);
     if (sw < 1 || sh < 1) continue;
 
-    scratch.clearRect(0, 0, SAMPLE, SAMPLE);
-    scratch.drawImage(canvas, sx, sy, sw, sh, 0, 0, SAMPLE, SAMPLE);
-    const stats = pixelStats(scratch.getImageData(0, 0, SAMPLE, SAMPLE).data);
+    const w = Math.max(1, Math.round(Math.min(SAMPLE_WIDTH, sw)));
+    const h = Math.max(1, Math.round((sh / sw) * w));
+    scratch.canvas.width = w;
+    scratch.canvas.height = h;
+    scratch.drawImage(canvas, sx, sy, sw, sh, 0, 0, w, h);
+    const stats = pixelStats(scratch.getImageData(0, 0, w, h).data);
     ph.dataset.loshImage = classifyImage({ areaRatio: (r.width * r.height) / (cv.width * cv.height), ...stats });
   }
 }
